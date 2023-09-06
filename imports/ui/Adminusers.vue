@@ -1,6 +1,6 @@
 <template>
 <!-- Sidebar -->
-  <div class="grid grid-cols-6 mb-6">
+  <div class="grid grid-cols-6 mb-6 mt-6">
     <div class="col-span-1">
       <aside
         id="logo-sidebar"

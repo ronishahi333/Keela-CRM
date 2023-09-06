@@ -1,6 +1,6 @@
 <template>
-<!-- Sidebar -->
-  <div class="grid grid-cols-6 mb-6">
+  <!-- Sidebar -->
+  <div class="grid grid-cols-6 mb-6 mt-6">
     <div class="col-span-1">
       <aside
         id="logo-sidebar"
@@ -22,7 +22,30 @@
               <a
                 class="flex items-center p-2 rounded-lg bg-purple-600 text-white dark:text-white group focus:dark:bg-gray-700 active:dark:bg-gray-700"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-building"
+                >
+                  <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+                  <path d="M9 22v-4h6v4" />
+                  <path d="M8 6h.01" />
+                  <path d="M16 6h.01" />
+                  <path d="M12 6h.01" />
+                  <path d="M12 10h.01" />
+                  <path d="M12 14h.01" />
+                  <path d="M16 10h.01" />
+                  <path d="M16 14h.01" />
+                  <path d="M8 10h.01" />
+                  <path d="M8 14h.01" />
+                </svg>
                 <span class="ml-3">Organizations</span>
               </a>
             </li>
@@ -31,7 +54,22 @@
                 href="http://localhost:3000/adminusers"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-circle-2"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg> 
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-user-circle-2"
+                >
+                  <path d="M18 20a6 6 0 0 0-12 0" />
+                  <circle cx="12" cy="10" r="4" />
+                  <circle cx="12" cy="12" r="10" />
+                </svg>
                 <span class="flex-1 ml-3 whitespace-nowrap">Users</span>
               </a>
             </li>
@@ -48,8 +86,31 @@
             <a
               class="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 dark:hover:text-white"
             >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>            
-            <span class = "ml-1">Organizations</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-building"
+              >
+                <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+                <path d="M9 22v-4h6v4" />
+                <path d="M8 6h.01" />
+                <path d="M16 6h.01" />
+                <path d="M12 6h.01" />
+                <path d="M12 10h.01" />
+                <path d="M12 14h.01" />
+                <path d="M16 10h.01" />
+                <path d="M16 14h.01" />
+                <path d="M8 10h.01" />
+                <path d="M8 14h.01" />
+              </svg>
+              <span class="ml-1">Organizations</span>
             </a>
           </li>
         </ol>
@@ -116,10 +177,8 @@
         </table>
       </div>
     </div>
-  </div>    
+  </div>
 </template>
 <script>
-export default {
-    
-}
+export default {};
 </script>

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
+    "bcrypt": "^5.1.1",
     "flowbite-vue": "0.0.17-next.2",
     "meteor-node-stubs": "^1.2.1",
     "vue": "^3.2.45",
