@@ -119,7 +119,7 @@
   </div>
 
   <!-- Add Organizations Button with Modal-->
-  
+
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
       <div>
@@ -132,7 +132,7 @@
         >
           Add Organization
         </button>
-    
+
         <!-- Overlay -->
         <div
           v-if="isModalOpen"
@@ -179,7 +179,11 @@
                 >
                   Register your Organization
                 </h3>
-                <form class="space-y-6" action="#">
+                <form
+                  class="space-y-6"
+                  action="#"
+                  @submit.prevent="registerUser"
+                >
                   <div>
                     <label
                       for="organization"
@@ -307,6 +311,7 @@
 
 <script>
 import { ref } from "vue";
+import { Meteor } from "meteor/meteor";
 
 export default {
   setup() {
@@ -320,6 +325,46 @@ export default {
       isModalOpen,
       toggleModal,
     };
+  },
+  // Inside your Vue component
+  methods: {
+    async registerUser(event) {
+
+      event.preventDefault();
+
+      const organization = document.getElementById("organization").value;
+      const fullname = document.getElementById("fullname").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const userData = {
+        organization,
+        fullname,
+        email,
+        password,
+      };
+
+      try {
+        // Call the 'user.register' method defined on the server
+        const userId = await new Promise((resolve, reject) => {
+          Meteor.call("user.register", userData, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+
+        // Registration successful
+        console.log(`User registered with ID: ${userId}`);
+        // Optionally, you can perform a redirect or show a success message
+        this.toggleModal();
+      } catch (error) {
+        console.error(error);
+        // Handle errors
+      }
+    },
   },
 };
 </script>
