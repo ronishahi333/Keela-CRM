@@ -44,30 +44,27 @@
 // });
 
 // server/methods.js
-import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
-import bcrypt from 'bcrypt';
+import { Meteor } from "meteor/meteor";
+import { Accounts } from "meteor/accounts-base";
 
-Meteor.methods({
-  'user.register'(userData) {
-    // Validate user data (e.g., check for duplicates, validate fields)
+Meteor.startup(() => {
+  Meteor.methods({
+   
+      "user.register"(userData) {
+      // Validate user data (e.g., check for duplicates, validate fields)
 
-    // Hash the user's password
-    const hashedPassword = bcrypt.hashSync(userData.password, 10);
+      // Create a new user document and insert it into MongoDB
+        const userId = Accounts.createUser({
+        email: userData.email,
+        password: userData.password,
+        profile: {
+          organization: userData.organization,
+          fullname: userData.fullname,
+        },
+      });
 
-    // Create a new user document and insert it into MongoDB
-    const userId = Accounts.createUser({
-      email: userData.email,
-      password: hashedPassword,
-      profile: {
-        organization: userData.organization,
-        fullname: userData.fullname,
-      },
-    });
+      return userId;
+    },
 
-    // Optionally, send a verification email if using the 'email' package
-    // Meteor.users.update(userId, { $set: { 'emails.0.verified': true } });
-
-    return userId;
-  },
+   });
 });
