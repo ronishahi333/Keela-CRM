@@ -165,6 +165,10 @@
     </div>
   </div>
 
+  <!--Log Out Button -->
+
+  
+
   <!--Dashboard Message-->
   <div class="grid grid-cols-6 mb-3">
     <h1

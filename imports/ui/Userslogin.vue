@@ -91,7 +91,6 @@
 
 <script>
 import { Meteor } from "meteor/meteor";
-//import { useRoute, useRouter } from "vue-router"; // Import useRoute and useRouter
 
 export default {
   data() {
@@ -113,53 +112,5 @@ export default {
       });
     },
   },
-
-  // setup() {
-  //   const route = useRoute();
-  //   const router = useRouter(); // Use useRouter to access the router
-
-  //   async function loginUser(event) {
-  //     event.preventDefault();
-  //     console.log("Login Clicked");
-  //     const email = document.getElementById("email").value;
-  //     const password = document.getElementById("password").value;
-
-  //       // const userId = await new Promise((resolve, reject) => {
-  //       //   Meteor.loginWithPassword(this.email, this.password, (error) => {
-  //       //         if (error) {
-  //       //             console.log(error.reason);
-  //       //         }
-  //       //   // Meteor.call("user.login", email, password, (error, result) => {
-  //       //   //   if (error) {
-  //       //   //     reject(error);
-  //       //   //   } else {
-  //       //   //     resolve(result);
-  //       //   //   }
-  //       //   });
-  //       // });
-
-  //       // Authentication successful, redirect to the dashboard
-  //       const { query } = route;
-  //       router.push({ name: "dashboard", query }); // Use router.push to navigate to the dashboard route
-  //     } catch (error) {
-  //       console.error(error);
-  //       // Handle authentication errors, e.g., show an error message
-
-  //       if (error.error === 403) {
-  //         // Incorrect password
-  //         // Display an error message to the user
-  //       } else if (error.error === 500) {
-  //         // Other server-side error
-  //         // Display an error message to the user
-  //       } else {
-  //         // Handle other possible errors
-  //       }
-  //     }
-  //   }
-
-  //   return {
-  //     loginUser,
-  //   };
-  // },
 };
 </script>
