@@ -105,7 +105,8 @@ export default {
     login() {
       Meteor.loginWithPassword(this.email, this.password, (error) => {
         if (error) {
-          console.log(error.reason);
+          alert("Invalid Email or Password")
+          //console.log(error.reason);
         } else {
           console.log("login Sucessful");
           this.$router.push({ name: "dashboard" });

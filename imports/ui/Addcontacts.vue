@@ -274,7 +274,7 @@
                 >
                   Add New Contact
                 </h3>
-                <form class="space-y-6" action="#">
+                <form class="space-y-6" @submit.prevent="savecontacts">
                   <div>
                     <label
                       for="flname"
@@ -285,6 +285,7 @@
                       type="text"
                       name="flname"
                       id="flname"
+                      v-model="contact.fullName"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     />
@@ -299,6 +300,7 @@
                       type="email"
                       name="email"
                       id="email"
+                      v-model="contact.email"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -312,6 +314,7 @@
                       type="text"
                       name="phonenumber"
                       id="phonenumber"
+                      v-model="contact.phoneNumber"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -325,6 +328,7 @@
                       type="text"
                       name="tags"
                       id="tags"
+                      v-model="contact.tags"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -398,7 +402,31 @@ import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
 
 export default {
+  name:"addcontacts",
+  data() {
+    return {
+      contact: {
+        fullName: "",
+        email: "",
+        phoneNumber: "",
+        tags: "",
+      },
+    };
+  },
+  setup() {
+    const ContactAddModal = ref(false);
+
+    function ContactToggleModal() {
+      ContactAddModal.value = !ContactAddModal.value;
+    }
+
+    return {
+      ContactAddModal,
+      ContactToggleModal,
+    };
+  },
   methods: {
+
     openDropdown() {
       // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
@@ -418,19 +446,19 @@ export default {
         }
       });
     },
+
+    savecontacts() {
+      Meteor.call("contacts.insert", this.contact, (error, result) => {
+        if (error) {
+          console.error("Error saving contact:", error.reason);
+        } else {
+          console.log("Contact saved with ID:", result);
+          // Clear the form or navigate to the contact list
+          this.ContactToggleModal(); // Example: Navigate to the contacts list
+        }
+      });
+    },  
   },
 
-  setup() {
-    const ContactAddModal = ref(false);
-
-    function ContactToggleModal() {
-      ContactAddModal.value = !ContactAddModal.value;
-    }
-
-    return {
-      ContactAddModal,
-      ContactToggleModal,
-    };
-  },
 };
 </script>

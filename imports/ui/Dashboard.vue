@@ -280,7 +280,7 @@
 
 export default {
   name: "dashboard",
-
+  
   methods: {
     openDropdown() {
       // Use $refs to access the dropdown element and show it
@@ -302,6 +302,5 @@ export default {
       });
     },
   },
-
 };
 </script>

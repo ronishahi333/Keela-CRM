@@ -23,13 +23,13 @@ export const router = createRouter({
       component: () => import("./About.vue"),
     },
     {
-      path: "/dashboard",
+      path: "/dashboard/",
       name: "dashboard",
       component: Dashboard,
     },
     {
       path: "/addcontacts",
-      name: "addcontact",
+      name: "addcontacts",
       component: Addcontacts,
     },
     {

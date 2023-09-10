@@ -46,6 +46,8 @@
 // server/methods.js
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
+import { Contacts } from '../imports/api/Contactcollection';
+import Contactmethods from '../imports/api/Contactmethods';
 
 Meteor.startup(() => {
   Meteor.methods({
@@ -67,4 +69,13 @@ Meteor.startup(() => {
     },
 
    });
+
+   Meteor.publish('contactsPublication', function () {
+    if (!this.userId) {
+      return this.ready(); // Return an empty result for non-logged-in users
+    }
+  
+    return Contacts.find({ userId: this.userId });
+  });
+
 });
