@@ -7,6 +7,7 @@ import Dashboard from "./Dashboard.vue";
 import Admin from "./Admin.vue";
 import Adminusers from "./Adminusers.vue";
 import Userlogin from "./Userslogin.vue";
+import Test from "./Test.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -55,6 +56,11 @@ export const router = createRouter({
       path: "/login",
       name: "login",
       component: Userlogin,
+    },
+    {
+      path: "/test",
+      name: "test",
+      component: Test,
     },
   ],
 });

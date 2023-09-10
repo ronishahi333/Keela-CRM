@@ -159,23 +159,62 @@
 
     <!-- Organization Name -->
     <div
-      class="col-span-1 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+      class="col-span-1 justify-self-end relative text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
     >
-      <h1 class="text-right">Organization Name</h1>
+      <button
+        id="dropdownHoverButton"
+        @mouseover="openDropdown"
+        @mouseout="closeDropdown"
+        data-dropdown-toggle="dropdownHover"
+        data-dropdown-trigger="hover"
+        class="font-medium rounded-lg text-sm pl-8 text-center inline-flex items-center"
+        type="button"
+      >
+        Organization Name
+        <svg
+          class="w-2.5 h-2.5 ml-2.5 mt-0.5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 10 6"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m1 1 4 4 4-4"
+          />
+        </svg>
+      </button>
+
+      <!-- Dropdown menu -->
+      <div
+        id="dropdownHover"
+        ref="dropdown"
+        @mouseover="openDropdown"
+        @mouseout="closeDropdown"
+        class="z-20 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-38 dark:bg-gray-700"
+      >
+        <ul
+          class="py-2 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownHoverButton"
+        >
+          <li>
+            <a
+              href="#"
+              class="block px-4 py-2 text-center hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              v-on:click="logout()"
+              >Log out</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <!-- Add Contact Button -->
-  <!-- <div class="grid grid-cols-6">
-    <div class="col-start-6 text-right">
-      <button
-        type="button"
-        class="px-5 py-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-      >
-        Add Contact
-      </button>
-    </div>
-  </div> -->
+  <!-- Add Contact Button with modal -->
+
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
       <div>
@@ -235,10 +274,7 @@
                 >
                   Add New Contact
                 </h3>
-                <form
-                  class="space-y-6"
-                  action="#"
-                >
+                <form class="space-y-6" action="#">
                   <div>
                     <label
                       for="flname"
@@ -362,6 +398,28 @@ import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
 
 export default {
+  methods: {
+    openDropdown() {
+      // Use $refs to access the dropdown element and show it
+      this.$refs.dropdown.classList.remove("hidden");
+    },
+    closeDropdown() {
+      // Use $refs to access the dropdown element and hide it
+      this.$refs.dropdown.classList.add("hidden");
+    },
+
+    logout() {
+      Meteor.logout((error) => {
+        if (error) {
+          console.error("Logout Error:", error);
+        } else {
+          console.log("Logout Sucessful");
+          this.$router.push({ name: "login" });
+        }
+      });
+    },
+  },
+
   setup() {
     const ContactAddModal = ref(false);
 
@@ -374,5 +432,5 @@ export default {
       ContactToggleModal,
     };
   },
-}
+};
 </script>
