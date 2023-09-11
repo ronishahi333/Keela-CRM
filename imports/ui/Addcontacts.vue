@@ -365,16 +365,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              v-for="contactdetail in showContacts"
+              v-bind:key="contactdetail._id"
+            >
               <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                Harry Potter
+                {{ contactdetail.fullName }}
               </th>
-              <td class="px-6 py-4">harry@gmail.com</td>
-              <td class="px-6 py-4">1513213</td>
-              <td class="px-6 py-4">Cool</td>
+              <td class="px-6 py-4">{{ contactdetail.email }}</td>
+              <td class="px-6 py-4">{{ contactdetail.phoneNumber }}</td>
+              <td class="px-6 py-4">{{ contactdetail.tags }}</td>
               <td class="px-6 py-4">
                 <button
                   type="button"
@@ -400,9 +404,10 @@
 <script>
 import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
+import { Contacts } from "../api/Contactcollection";
 
 export default {
-  name:"addcontacts",
+  name: "addcontacts",
   data() {
     return {
       contact: {
@@ -413,6 +418,7 @@ export default {
       },
     };
   },
+
   setup() {
     const ContactAddModal = ref(false);
 
@@ -425,8 +431,8 @@ export default {
       ContactToggleModal,
     };
   },
-  methods: {
 
+  methods: {
     openDropdown() {
       // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
@@ -453,12 +459,42 @@ export default {
           console.error("Error saving contact:", error.reason);
         } else {
           console.log("Contact saved with ID:", result);
-          // Clear the form or navigate to the contact list
-          this.ContactToggleModal(); // Example: Navigate to the contacts list
+          this.ContactToggleModal(); //Closes the Add Contact Modal
         }
       });
-    },  
+    },
+
+    // getUser() {
+    //   const currentUser = Meteor.user();
+    //   if (currentUser) {
+    //     this.currentUser = {
+    //       org: currentUser.profile.organizationName,
+    //       id: currentUser._id,
+    //       // orgId: currentUser.profile.organizationId
+    //     };
+    //   }
+    // },
   },
 
+  // created() {
+  //       this.getUser();
+  //   },
+
+  meteor: {
+    $subscribe: {
+      contactsPublication: [],
+      //users: [],
+    },
+    showContacts() { 
+      const userId = Meteor.userId();
+      //const userDetails = Meteor.user();
+       //const organization = Meteor.user().profile.organization;
+       const organizationid = Meteor.user()._id
+      if (userId) {
+      return Contacts.find({organizationID:organizationid}).fetch();
+     }
+    },
+
+  },
 };
 </script>

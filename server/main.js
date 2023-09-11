@@ -46,17 +46,16 @@
 // server/methods.js
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
-import { Contacts } from '../imports/api/Contactcollection';
-import Contactmethods from '../imports/api/Contactmethods';
+import { Contacts } from "../imports/api/Contactcollection";
+import Contactmethods from "../imports/api/Contactmethods";
 
 Meteor.startup(() => {
   Meteor.methods({
-   
-      "user.register"(userData) {
+    "user.register"(userData) {
       // Validate user data (e.g., check for duplicates, validate fields)
 
       // Create a new user document and insert it into MongoDB
-        const userId = Accounts.createUser({
+      const userId = Accounts.createUser({
         email: userData.email,
         password: userData.password,
         profile: {
@@ -67,15 +66,13 @@ Meteor.startup(() => {
 
       return userId;
     },
-
-   });
-
-   Meteor.publish('contactsPublication', function () {
-    if (!this.userId) {
-      return this.ready(); // Return an empty result for non-logged-in users
-    }
-  
-    return Contacts.find({ userId: this.userId });
   });
+});
 
+Meteor.publish("contactsPublication", function () {
+  if (!this.userId) {
+    return this.ready(); // Return an empty result for non-logged-in users
+  }
+
+  return Contacts.find();
 });
