@@ -20,9 +20,9 @@
           <h1
             class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
           >
-            Sign in to your CRM account
+            Register your CRM account
           </h1>
-          <form class="space-y-4 md:space-y-6" @submit.prevent="login">
+          <form class="space-y-4 md:space-y-6" @submit.prevent="registerUser">
             <div>
               <label
                 for="email"
@@ -31,12 +31,12 @@
               >
               <input
                 type="email"
-                v-model="email"
                 name="email"
                 id="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
                 required=""
+                v-model = "email"
               />
             </div>
             <div>
@@ -47,49 +47,28 @@
               >
               <input
                 type="password"
-                v-model="password"
                 name="password"
                 id="password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required=""
+                v-model ="password"
               />
             </div>
             <button
               type="submit"
               class="w-full text-white bg-purple-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
-              Sign in
+              Register
             </button>
             <p class="text-sm font-light text-gray-700 dark:text-gray-400">
-              Don't have an account?
+              Already have an account?
               <a
-                href="http://localhost:3000/register"
+                href="http://localhost:3000/login"
                 class="font-medium text-blue-600 hover:underline dark:text-primary-500"
                 >Click me</a
               >
             </p>
-            <div
-              class="flex items-center p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
-              role="alert"
-            >
-              <svg
-                class="flex-shrink-0 inline w-4 h-4 mr-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
-                />
-              </svg>
-              <span class="sr-only">Info</span>
-              <div>
-                <span class="font-medium"></span> Please contact Admin to
-                register your own organization
-              </div>
-            </div>
           </form>
         </div>
       </div>
@@ -97,31 +76,41 @@
   </section>
 </template>
 
+
 <script>
-import { Meteor } from "meteor/meteor";
-
 export default {
-  name: "login",
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-
   methods: {
-    login() {
-      Meteor.loginWithPassword(this.email, this.password, (error) => {
-        if (error) {
-          alert("Invalid Email or Password");
-          //console.log(error.reason);
-        } else {
-          console.log("login Sucessful");
-          this.$router.push({ name: "dashboard" });
-        }
-      });
+    async registerUser(event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const userData = {
+        email,
+        password,
+      };
+
+      try {
+        // Call the 'user.register' method defined on the server
+        const userId = await new Promise((resolve, reject) => {
+          Meteor.call("user.register", userData, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+
+        // Registration successful
+        console.log(`User registered with ID: ${userId}`);
+        // Optionally, you can perform a redirect or show a success message
+      } catch (error) {
+        console.error(error);
+        // Handle errors
+      }
     },
   },
 };
 </script>
-
+  

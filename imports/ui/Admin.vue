@@ -179,57 +179,56 @@
                 >
                   Register your Organization
                 </h3>
-                <form
-                  class="space-y-6"
-                  action="#"
-                  @submit.prevent="registerUser"
-                >
+                <form class="space-y-6" @submit.prevent="saveorgs">
                   <div>
                     <label
-                      for="organization"
+                      for="orgname"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Organization Name</label
                     >
                     <input
                       type="text"
-                      name="organization"
-                      id="organization"
+                      name="orgname"
+                      id="orgname"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      v-model="organization.organizationname"
                       required
                       placeholder="Social Donation"
                     />
                   </div>
                   <div>
                     <label
-                      for="fullname"
+                      for="orgaddress"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Full Name</label
+                      >Organization Address</label
                     >
                     <input
                       type="text"
-                      name="fullname"
-                      id="fullname"
+                      name="orgaddress"
+                      id="ordaddress"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      v-model="organization.organizationaddress"
                       required
-                      placeholder="Marcus Stoinis"
+                      placeholder="United Kingdom"
                     />
                   </div>
                   <div>
                     <label
-                      for="email"
+                      for="orgnumber"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Email</label
+                      >Organization Number</label
                     >
                     <input
-                      type="email"
-                      name="email"
-                      id="email"
+                      type="text"
+                      name="orgnumber"
+                      id="orgnumber"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      placeholder="name@company.com"
+                      v-model="organization.organizationnumber"
+                      placeholder="984986416516"
                       required
                     />
                   </div>
-                  <div>
+                  <!-- <div>
                     <label
                       for="password"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -243,7 +242,7 @@
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     />
-                  </div>
+                  </div> -->
                   <button
                     type="submit"
                     class="w-full text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -271,8 +270,8 @@
           >
             <tr>
               <th scope="col" class="px-6 py-3">Organizations Name</th>
-              <th scope="col" class="px-6 py-3"></th>
-              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3">Organizations Address</th>
+              <th scope="col" class="px-6 py-3">Organization Number</th>
               <th scope="col" class="px-6 py-3"></th>
             </tr>
           </thead>
@@ -312,8 +311,18 @@
 <script>
 import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
+//import { Organizations } from "../api/Contactcollection";
 
 export default {
+  data() {
+    return {
+      organization: {
+        organizationname: "",
+        organizationaddress: "",
+        organizationnumber: "",
+      },
+    };
+  },
   setup() {
     const isModalOpen = ref(false);
 
@@ -328,43 +337,54 @@ export default {
   },
   // Inside your Vue component
   methods: {
-    async registerUser(event) {
-
-      event.preventDefault();
-
-      const organization = document.getElementById("organization").value;
-      const fullname = document.getElementById("fullname").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      const userData = {
-        organization,
-        fullname,
-        email,
-        password,
-      };
-
-      try {
-        // Call the 'user.register' method defined on the server
-        const userId = await new Promise((resolve, reject) => {
-          Meteor.call("user.register", userData, (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          });
-        });
-
-        // Registration successful
-        console.log(`User registered with ID: ${userId}`);
-        // Optionally, you can perform a redirect or show a success message
-        this.toggleModal();
-      } catch (error) {
-        console.error(error);
-        // Handle errors
-      }
+    saveorgs() {
+      Meteor.call("insertOrg", this.organization, (error, result) => {
+        if (error) {
+          console.error("Error saving organization:", error.reason);
+        } else {
+          console.log("Organization saved with ID:", result);
+          this.toggleModal(); //Closes the Add Organization Modal
+        }
+      });
     },
+
+    // async registerUser(event) {
+
+    //   event.preventDefault();
+
+    //   const organization = document.getElementById("organization").value;
+    //   const fullname = document.getElementById("fullname").value;
+    //   const email = document.getElementById("email").value;
+    //   const password = document.getElementById("password").value;
+
+    //   const userData = {
+    //     organization,
+    //     fullname,
+    //     email,
+    //     password,
+    //   };
+
+    //   try {
+    //     // Call the 'user.register' method defined on the server
+    //     const userId = await new Promise((resolve, reject) => {
+    //       Meteor.call("user.register", userData, (error, result) => {
+    //         if (error) {
+    //           reject(error);
+    //         } else {
+    //           resolve(result);
+    //         }
+    //       });
+    //     });
+
+    //     // Registration successful
+    //     console.log(`User registered with ID: ${userId}`);
+    //     // Optionally, you can perform a redirect or show a success message
+    //     this.toggleModal();
+    //   } catch (error) {
+    //     console.error(error);
+    //     // Handle errors
+    //   }
+    // },
   },
 };
 </script>

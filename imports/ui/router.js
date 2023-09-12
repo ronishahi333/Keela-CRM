@@ -8,6 +8,7 @@ import Admin from "./Admin.vue";
 import Adminusers from "./Adminusers.vue";
 import Userlogin from "./Userslogin.vue";
 import Test from "./Test.vue";
+import Userregister from "./Usersregister.vue"
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -56,6 +57,11 @@ export const router = createRouter({
       path: "/login",
       name: "login",
       component: Userlogin,
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: Userregister,
     },
     {
       path: "/test",

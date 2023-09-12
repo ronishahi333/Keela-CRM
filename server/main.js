@@ -46,8 +46,12 @@
 // server/methods.js
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
+
 import { Contacts } from "../imports/api/Contactcollection";
 import Contactmethods from "../imports/api/Contactmethods";
+
+import { Organizations } from "../imports/api/Orgcollections";
+import Orgmethods from "../imports/api/Orgmethods";
 
 Meteor.startup(() => {
   Meteor.methods({
@@ -58,10 +62,11 @@ Meteor.startup(() => {
       const userId = Accounts.createUser({
         email: userData.email,
         password: userData.password,
-        profile: {
-          organization: userData.organization,
-          fullname: userData.fullname,
-        },
+        // profile: {
+        //   organization: userData.organization,
+        //   fullname: userData.fullname,
+        //   organizationId: userData.I
+        // },
       });
 
       return userId;
@@ -76,3 +81,7 @@ Meteor.publish("contactsPublication", function () {
 
   return Contacts.find();
 });
+
+Meteor.publish("orgPublication", function(){
+  return Organizations.find();
+})
