@@ -170,7 +170,7 @@
                 >
                   Add New User
                 </h3>
-                <form class="space-y-6">
+                <form class="space-y-6" @submit.prevent="saveUsers">
                   <div>
                     <label
                       for="flname"
@@ -184,7 +184,7 @@
                       required
                     >
                       <option
-                        v-for="organization in showContacts"
+                        v-for="organization in showOrganizations"
                         v-bind:value="organization"
                         v-bind:key="organization._id"
                       >
@@ -303,74 +303,95 @@
 </template>
 <script>
 import { ref } from "vue";
+import { Organizations } from "../api/Orgcollections";
 
 export default {
   data() {
     return {
-      organization: "",
-      email: "",
-      password: "",
-      permission: "",
+        organization: "",
+        email: "",
+        password: "",
+        permission: "",
     };
   },
 
   methods: {
-    async registerUser(event) {
-      event.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      const userData = {
-        email,
-        password,
-        organizationName,
-        permission,
+    saveUsers() {
+      const option = {
+        email: this.email,
+        password: this.password,
+        profile: {
+          organizationName: this.organization.organizationname,
+          organizationId: this.organization._id,
+        },
       };
-
-      try {
-        // Call the 'user.register' method defined on the server
-        const userId = await new Promise((resolve, reject) => {
-          Meteor.call("user.register", userData, (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          });
-        });
-
-        // Registration successful
-        console.log(`User registered with ID: ${userId}`);
-        // Optionally, you can perform a redirect or show a success message
-      } catch (error) {
-        console.error(error);
-        // Handle errors
-      }
+      Meteor.call("insertUser", option, (error, result) => {
+        if (error) {
+          console.error("Error saving org:", error.reason);
+        } else {
+          console.log("Org saved");
+          this.AdminUserToggleModal(); //Closes the Add Contact Modal
+        }
+      });
     },
+
+    // async registerUser(event) {
+    //   event.preventDefault();
+    //   // const email = document.getElementById("email").value;
+    //   // const password = document.getElementById("password").value;
+
+    //   const userData = {
+    //     email:this.email,
+    //     password:this.password,
+    //     profile:{
+    //       organization:this.organization,
+    //       permission:this.permission,
+    //     }
+    //     };
+
+    //   try {
+    //     // Call the 'user.register' method defined on the server
+    //     const userId = await new Promise((resolve, reject) => {
+    //       Meteor.call("user.register", userData, (error, result) => {
+    //         if (error) {
+    //           reject(error);
+    //         } else {
+    //           resolve(result);
+    //         }
+    //       });
+    //     });
+
+    //     // Registration successful
+    //     console.log(`User registered with ID: ${userId}`);
+    //     // Optionally, you can perform a redirect or show a success message
+    //   } catch (error) {
+    //     console.error(error);
+    //     // Handle errors
+    //   }
+    // },
   },
 
   meteor: {
     $subscribe: {
-      contactsPublication: [],
+      //contactsPublication: [],
       orgPublication: [],
       //users: [],
     },
-    showContacts() { 
-      // const userId = Meteor.userId();
-      //const userDetails = Meteor.user();
-       //const organization = Meteor.user().profile.organization;
-       //const organizationid = Meteor.user()._id
-      // if (userId) {
-      return Contacts.find({}).fetch();
-    //  }
-    },
+    // showContacts() {
+    //   // const userId = Meteor.userId();
+    //   //const userDetails = Meteor.user();
+    //    //const organization = Meteor.user().profile.organization;
+    //    //const organizationid = Meteor.user()._id
+    //   // if (userId) {
+    //   return Contacts.find({}).fetch();
+    // //  }
+    // },
     showOrganizations() {
-      //const userId = Meteor.userId();
-      // if (userId) {
-      //   return Organizations.find({}).fetch();
-      // }
-      return Organizations.find({}).fetch();
-
+      const userId = Meteor.userId();
+      if (userId) {
+        return Organizations.find({}).fetch();
+      }
+      //return Organizations.find({}).fetch();
     },
   },
   setup() {

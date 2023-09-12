@@ -489,9 +489,9 @@ export default {
       const userId = Meteor.userId();
       //const userDetails = Meteor.user();
        //const organization = Meteor.user().profile.organization;
-       const organizationid = Meteor.user()._id
+       //const organizationid = Meteor.user()._id
       if (userId) {
-      return Contacts.find({organizationID:organizationid}).fetch();
+      return Contacts.find({}).fetch();
      }
     },
 

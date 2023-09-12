@@ -53,6 +53,8 @@ import Contactmethods from "../imports/api/Contactmethods";
 import { Organizations } from "../imports/api/Orgcollections";
 import Orgmethods from "../imports/api/Orgmethods";
 
+import UserMethods from "../imports/api/UserMethods";
+
 Meteor.startup(() => {
   Meteor.methods({
     "user.register"(userData) {
@@ -60,8 +62,9 @@ Meteor.startup(() => {
 
       // Create a new user document and insert it into MongoDB
       const userId = Accounts.createUser({
-        email: userData.email,
-        password: userData.password,
+        ...userData
+        // email: userData.email,
+        // password: userData.password,
         // profile: {
         //   organization: userData.organization,
         //   fullname: userData.fullname,
