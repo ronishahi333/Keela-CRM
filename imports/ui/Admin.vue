@@ -191,7 +191,7 @@
                       name="orgname"
                       id="orgname"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      v-model="organization.organizationname"
+                      v-model="organization.organizationName"
                       required
                       placeholder="Social Donation"
                     />
@@ -272,20 +272,22 @@
               <th scope="col" class="px-6 py-3">Organizations Name</th>
               <th scope="col" class="px-6 py-3">Organizations Address</th>
               <th scope="col" class="px-6 py-3">Organization Number</th>
-              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+             v-for="org in showOrganizations" 
+             v-bind:key="org._id">
               <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                Frameworks
+                {{ org.organizationName }}
               </th>
-              <td class="px-6 py-4"></td>
-              <td class="px-6 py-4"></td>
-              <td class="px-6 py-4"></td>
+              <td class="px-6 py-4">{{ org.organizationaddress }}</td>
+              <td class="px-6 py-4">{{ org.organizationnumber }}</td>
+              <!-- <td class="px-6 py-4"></td> -->
               <td class="px-6 py-4">
                 <button
                   type="button"
@@ -311,13 +313,13 @@
 <script>
 import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
-//import { Organizations } from "../api/Contactcollection";
+import { Organizations } from "../api/Orgcollections";
 
 export default {
   data() {
     return {
       organization: {
-        organizationname: "",
+        organizationName: "",
         organizationaddress: "",
         organizationnumber: "",
       },
@@ -347,44 +349,19 @@ export default {
         }
       });
     },
-
-    // async registerUser(event) {
-
-    //   event.preventDefault();
-
-    //   const organization = document.getElementById("organization").value;
-    //   const fullname = document.getElementById("fullname").value;
-    //   const email = document.getElementById("email").value;
-    //   const password = document.getElementById("password").value;
-
-    //   const userData = {
-    //     organization,
-    //     fullname,
-    //     email,
-    //     password,
-    //   };
-
-    //   try {
-    //     // Call the 'user.register' method defined on the server
-    //     const userId = await new Promise((resolve, reject) => {
-    //       Meteor.call("user.register", userData, (error, result) => {
-    //         if (error) {
-    //           reject(error);
-    //         } else {
-    //           resolve(result);
-    //         }
-    //       });
-    //     });
-
-    //     // Registration successful
-    //     console.log(`User registered with ID: ${userId}`);
-    //     // Optionally, you can perform a redirect or show a success message
-    //     this.toggleModal();
-    //   } catch (error) {
-    //     console.error(error);
-    //     // Handle errors
-    //   }
-    // },
+  },
+  meteor: {
+    $subscribe: {
+      orgPublication: [],
+      users: [],
+    },
+    showOrganizations() {
+      // const userId = Meteor.userId();
+      // if (userId) {
+        return Organizations.find({}).fetch();
+      // }
+      //return Organizations.find({}).fetch();
+    },
   },
 };
 </script>

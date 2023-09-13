@@ -88,3 +88,7 @@ Meteor.publish("contactsPublication", function () {
 Meteor.publish("orgPublication", function(){
   return Organizations.find();
 })
+
+Meteor.publish('users', function () {
+  return Meteor.users.find({});
+});

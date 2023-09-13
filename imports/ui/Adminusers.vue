@@ -180,6 +180,7 @@
                     <select
                       name="orgname"
                       id="orgname"
+                      v-model="selectedOrganization"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     >
@@ -188,7 +189,7 @@
                         v-bind:value="organization"
                         v-bind:key="organization._id"
                       >
-                        {{ organization.organizationname }}
+                        {{ organization.organizationName }}
                       </option>
                     </select>
                   </div>
@@ -263,23 +264,24 @@
             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
           >
             <tr>
-              <th scope="col" class="px-6 py-3">Users</th>
-              <th scope="col" class="px-6 py-3">Organizations Name</th>
+              <th scope="col" class="px-6 py-3">User Email</th>
+              <th scope="col" class="px-6 py-3">Organization Name</th>
               <th scope="col" class="px-6 py-3">Permission</th>
-              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+            v-for="user in showUsers"
+              v-bind:key="user._id">
               <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                Shane Warne
+                {{ user.emails[0].address }}
               </th>
-              <td class="px-6 py-4">Frameworks</td>
-              <td class="px-6 py-4">Administrator</td>
-              <td class="px-6 py-4"></td>
+              <td class="px-6 py-4">{{ user.profile.organizationName }}</td>
+              <td class="px-6 py-4">{{ user.profile.permission }}</td>
               <td class="px-6 py-4">
                 <button
                   type="button"
@@ -308,7 +310,7 @@ import { Organizations } from "../api/Orgcollections";
 export default {
   data() {
     return {
-        organization: "",
+        selectedOrganization: "",
         email: "",
         password: "",
         permission: "",
@@ -321,78 +323,39 @@ export default {
         email: this.email,
         password: this.password,
         profile: {
-          organizationName: this.organization.organizationname,
-          organizationId: this.organization._id,
+          organizationName: this.selectedOrganization.organizationName,
+          organizationId: this.selectedOrganization._id,
+          permission: this.permission,
         },
       };
       Meteor.call("insertUser", option, (error, result) => {
         if (error) {
-          console.error("Error saving org:", error.reason);
+          console.error("Error saving User", error.reason);
         } else {
-          console.log("Org saved");
+          console.log("User saved");
+          console.log(option)
           this.AdminUserToggleModal(); //Closes the Add Contact Modal
         }
       });
     },
-
-    // async registerUser(event) {
-    //   event.preventDefault();
-    //   // const email = document.getElementById("email").value;
-    //   // const password = document.getElementById("password").value;
-
-    //   const userData = {
-    //     email:this.email,
-    //     password:this.password,
-    //     profile:{
-    //       organization:this.organization,
-    //       permission:this.permission,
-    //     }
-    //     };
-
-    //   try {
-    //     // Call the 'user.register' method defined on the server
-    //     const userId = await new Promise((resolve, reject) => {
-    //       Meteor.call("user.register", userData, (error, result) => {
-    //         if (error) {
-    //           reject(error);
-    //         } else {
-    //           resolve(result);
-    //         }
-    //       });
-    //     });
-
-    //     // Registration successful
-    //     console.log(`User registered with ID: ${userId}`);
-    //     // Optionally, you can perform a redirect or show a success message
-    //   } catch (error) {
-    //     console.error(error);
-    //     // Handle errors
-    //   }
-    // },
   },
 
   meteor: {
     $subscribe: {
-      //contactsPublication: [],
       orgPublication: [],
-      //users: [],
+      users: [],
     },
-    // showContacts() {
-    //   // const userId = Meteor.userId();
-    //   //const userDetails = Meteor.user();
-    //    //const organization = Meteor.user().profile.organization;
-    //    //const organizationid = Meteor.user()._id
-    //   // if (userId) {
-    //   return Contacts.find({}).fetch();
-    // //  }
-    // },
     showOrganizations() {
       const userId = Meteor.userId();
-      if (userId) {
+      // if (userId) {
         return Organizations.find({}).fetch();
-      }
+      // }
       //return Organizations.find({}).fetch();
     },
+
+    showUsers() {
+      return Meteor.users.find({});
+    }
   },
   setup() {
     const AdminUserAddModal = ref(false);
