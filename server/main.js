@@ -50,6 +50,9 @@ import { Accounts } from "meteor/accounts-base";
 import { Contacts } from "../imports/api/Contactcollection";
 import Contactmethods from "../imports/api/Contactmethods";
 
+import { Tags } from "../imports/api/Tagcollection";
+import Tagmethods from "../imports/api/Tagmethods";
+
 import { Organizations } from "../imports/api/Orgcollections";
 import Orgmethods from "../imports/api/Orgmethods";
 
@@ -83,6 +86,10 @@ Meteor.publish("contactsPublication", function () {
   }
 
   return Contacts.find();
+});
+
+Meteor.publish("tagsPublication", function () {
+  return Tags.find();
 });
 
 Meteor.publish("orgPublication", function(){

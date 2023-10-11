@@ -332,7 +332,7 @@ export default {
         if (error) {
           console.error("Error saving User", error.reason);
         } else {
-          console.log("User saved");
+          console.log("User saved", result);
           console.log(option)
           this.AdminUserToggleModal(); //Closes the Add Contact Modal
         }

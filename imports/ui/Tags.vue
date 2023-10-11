@@ -213,7 +213,7 @@
     </div>
   </div>
 
-   <!-- Add Tag Button with modal-->
+  <!-- Add Tag Button with modal-->
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
       <div>
@@ -273,10 +273,10 @@
                 >
                   Add New Tag
                 </h3>
-                <form class="space-y-6">
+                <form class="space-y-6" @submit.prevent="savetags">
                   <div>
                     <label
-                      for="flname"
+                      for="tname"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Tag Name</label
                     >
@@ -284,6 +284,7 @@
                       type="text"
                       name="tname"
                       id="tname"
+                      v-model = "tag.tagName"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     />
@@ -317,18 +318,22 @@
               <th scope="col" class="px-6 py-3">Tags</th>
               <th scope="col" class="px-6 py-3"></th>
               <th scope="col" class="px-6 py-3"></th>
-              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+            v-for = "tagname in showTags"
+            v-bind:key = "tagname._id"
+            >
               <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                Tag1
+
+              {{ tagname.tagName }}
+                
               </th>
-              <td class="px-6 py-4"></td>
               <td class="px-6 py-4"></td>
               <td class="px-6 py-4"></td>
               <td class="px-6 py-4">
@@ -354,7 +359,16 @@
 </template>
 <script>
 import { ref } from "vue";
+import { Meteor } from "meteor/meteor";
+import { Tags } from "../api/Tagcollection";
 export default {
+  data() {
+    return {
+      tag:{
+        tagName: "",
+      }
+    };
+  },
   setup() {
     const TagAddModal = ref(false);
 
@@ -387,6 +401,30 @@ export default {
           this.$router.push({ name: "login" });
         }
       });
+    },
+
+    savetags() {
+      Meteor.call("tags.insert", this.tag, (error, result) => {
+        if (error) {
+          console.error("Error saving tag:", error.reason);
+        } else {
+          console.log("tag saved with ID:", result);
+          this.TagToggleModal(); //Closes the Add Contact Modal
+        }
+      });
+    },
+  },
+
+  meteor: {
+    $subscribe: {
+      tagsPublication: [],
+    },
+    showTags() { 
+      const userId = Meteor.userId();
+      //const orgId = Meteor.user().profile.organizationId;
+      if (userId) {
+      return Tags.find({ }).fetch();
+     }
     },
   },
 };
