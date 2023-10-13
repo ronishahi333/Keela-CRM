@@ -359,7 +359,7 @@
 </template>
 <script>
 import { ref } from "vue";
-import { Meteor } from "meteor/meteor";
+//import { Meteor } from "meteor/meteor";
 import { Tags } from "../api/Tagcollection";
 export default {
   data() {
@@ -423,7 +423,7 @@ export default {
       const userId = Meteor.userId();
       //const orgId = Meteor.user().profile.organizationId;
       if (userId) {
-      return Tags.find({ }).fetch();
+      return Tags.find({}).fetch();
      }
     },
   },

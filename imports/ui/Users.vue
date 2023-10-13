@@ -273,20 +273,45 @@
                 >
                   Add New User
                 </h3>
-                <form class="space-y-6">
+                <form class="space-y-6" @submit.prevent="saveUsers">
                   <div>
                     <label
-                      for="flname"
+                      for="orgname"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >User</label
+                      >Organization Name</label
                     >
-                    <input
-                      type="text"
-                      name="uname"
-                      id="uname"
+                    <select
+                      name="orgname"
+                      id="orgname"
+                      v-model="selectedOrganization"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
-                    />
+                    >
+                      <option :value="selectedOrganization">
+                        {{ selectedOrganization }}
+                      </option>
+                    </select>
+                    <!-- <input
+                      type="text"
+                      name="orgname"
+                      id="orgname"
+                      v-model="selectedOrganization"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      required
+                    /> -->
+                    <!-- <option
+                        v-for="organization in showOrganizations"
+                        v-bind:value="organization"
+                        v-bind:key="organization._id"
+                      >
+                        {{ organization.organizationName }}
+                      </option> -->
+                    <!-- <div
+                      class="mt-2 text-gray-900 dark:text-white"
+                      v-if="selectedOrganization"
+                    >
+                      Selected Organization: {{ selectedOrganization }}
+                    </div> -->
                   </div>
                   <div>
                     <label
@@ -298,6 +323,7 @@
                       type="email"
                       name="email"
                       id="email"
+                      v-model="email"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -305,14 +331,32 @@
                     <label
                       for="phonenumber"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Permission</label
+                      >Password</label
                     >
                     <input
+                      type="password"
+                      name="pass"
+                      id="pass"
+                      v-model="password"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="permission"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Permission</label
+                    >
+                    <select
                       type="text"
                       name="permission"
                       id="permission"
+                      v-model="permission"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    />
+                    >
+                      <option value="admin">Admin</option>
+                      <option value="coordinator">Coordinator</option>
+                    </select>
                   </div>
                   <button
                     type="submit"
@@ -340,21 +384,26 @@
             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
           >
             <tr>
-              <th scope="col" class="px-6 py-3">Name</th>
-              <th scope="col" class="pl-12 py-3">Email Address</th>
+              <th scope="col" class="px-6 py-3">Organization Name</th>
+              <th scope="col" class="pl-12 py-3">Primary Email</th>
               <th scope="col" class="px-6 py-3">Permisson</th>
+              <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              v-for="user in showUsers"
+              v-bind:key="user._id"
+            >
               <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                David
+                {{ user.profile.organizationName }}
               </th>
-              <td class="pl-12 py-4">david@getnada.com</td>
-              <td class="px-6 py-4">Administrator</td>
+              <td class="px-6 py-4">{{ user.emails[0].address }}</td>
+              <td class="px-6 py-4">{{ user.profile.permission }}</td>
               <td class="px-6 py-4">
                 <button
                   type="button"
@@ -378,8 +427,20 @@
 </template>
 <script>
 import { ref } from "vue";
+import { Organizations } from "../api/Orgcollections";
 
 export default {
+  data() {
+    const user = Meteor.user();
+
+    return {
+      selectedOrganization: user ? user.profile.organizationName : "",
+      email: "",
+      password: "",
+      permission: "",
+    };
+  },
+
   setup() {
     const UserAddModal = ref(false);
 
@@ -394,6 +455,27 @@ export default {
   },
 
   methods: {
+    saveUsers() {
+      const option = {
+        email: this.email,
+        password: this.password,
+        profile: {
+          organizationName: this.selectedOrganization.organizationName,
+          organizationId: this.selectedOrganization._id,
+          permission: this.permission,
+        },
+      };
+      Meteor.call("insertUser", option, (error, result) => {
+        if (error) {
+          console.error("Error saving User", error.reason);
+        } else {
+          console.log("User saved", result);
+          console.log(option);
+          this.UserToggleModal(); //Closes the Add Contact Modal
+        }
+      });
+    },
+
     openDropdown() {
       // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
@@ -412,6 +494,21 @@ export default {
           this.$router.push({ name: "login" });
         }
       });
+    },
+  },
+  meteor: {
+    $subscribe: {
+      orgPublication: [],
+      users: [],
+    },
+    showOrganizations() {
+      const userId = Meteor.userId();
+      // if (userId) {
+      return Organizations.find({}).fetch();
+      // }
+    },
+    showUsers() {
+      return Meteor.users.find({});
     },
   },
 };

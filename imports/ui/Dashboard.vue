@@ -170,7 +170,7 @@
         class="font-medium rounded-lg text-sm pl-8 text-center inline-flex items-center"
         type="button"
       >
-        Organization Name
+        {{ user.org }}
         <svg
           class="w-2.5 h-2.5 ml-2.5 mt-0.5"
           aria-hidden="true"
@@ -277,10 +277,19 @@
 </template>
 
 <script>
-
 export default {
   name: "dashboard",
-  
+
+  data() {
+    return {
+      user: "",
+    };
+  },
+
+  created() {
+    this.getUser();
+  },
+
   methods: {
     openDropdown() {
       // Use $refs to access the dropdown element and show it
@@ -289,6 +298,15 @@ export default {
     closeDropdown() {
       // Use $refs to access the dropdown element and hide it
       this.$refs.dropdown.classList.add("hidden");
+    },
+
+    getUser() {
+      const user = Meteor.user();
+      if (user) {
+        this.user = {
+          org: user.profile.organizationName,
+        };
+      }
     },
 
     logout() {
