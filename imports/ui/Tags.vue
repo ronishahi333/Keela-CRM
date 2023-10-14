@@ -409,6 +409,7 @@ export default {
           console.error("Error saving tag:", error.reason);
         } else {
           console.log("tag saved with ID:", result);
+          this.tag.tagName = ""; // Clears the form field after submitting
           this.TagToggleModal(); //Closes the Add Contact Modal
         }
       });

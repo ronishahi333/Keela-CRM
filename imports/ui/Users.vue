@@ -291,27 +291,6 @@
                         {{ selectedOrganization }}
                       </option>
                     </select>
-                    <!-- <input
-                      type="text"
-                      name="orgname"
-                      id="orgname"
-                      v-model="selectedOrganization"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      required
-                    /> -->
-                    <!-- <option
-                        v-for="organization in showOrganizations"
-                        v-bind:value="organization"
-                        v-bind:key="organization._id"
-                      >
-                        {{ organization.organizationName }}
-                      </option> -->
-                    <!-- <div
-                      class="mt-2 text-gray-900 dark:text-white"
-                      v-if="selectedOrganization"
-                    >
-                      Selected Organization: {{ selectedOrganization }}
-                    </div> -->
                   </div>
                   <div>
                     <label
@@ -471,6 +450,11 @@ export default {
         } else {
           console.log("User saved", result);
           console.log(option);
+          //the four lines below clears the forms fields after saving
+          this.selectedOrganization = "";
+          this.email = "";
+          this.password = "",
+          this.permission = "",
           this.UserToggleModal(); //Closes the Add Contact Modal
         }
       });

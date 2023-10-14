@@ -271,9 +271,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-            v-for="user in showUsers"
-              v-bind:key="user._id">
+            <tr
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              v-for="user in showUsers"
+              v-bind:key="user._id"
+            >
               <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -310,10 +312,10 @@ import { Organizations } from "../api/Orgcollections";
 export default {
   data() {
     return {
-        selectedOrganization: "",
-        email: "",
-        password: "",
-        permission: "",
+      selectedOrganization: "",
+      email: "",
+      password: "",
+      permission: "",
     };
   },
 
@@ -333,7 +335,12 @@ export default {
           console.error("Error saving User", error.reason);
         } else {
           console.log("User saved", result);
-          console.log(option)
+          console.log(option);
+          //the four lines below clears the forms fields after saving
+          this.selectedOrganization = "";
+          this.email = "";
+          this.password = "";
+          this.permission = "";
           this.AdminUserToggleModal(); //Closes the Add Contact Modal
         }
       });
@@ -348,14 +355,14 @@ export default {
     showOrganizations() {
       const userId = Meteor.userId();
       // if (userId) {
-        return Organizations.find({}).fetch();
+      return Organizations.find({}).fetch();
       // }
       //return Organizations.find({}).fetch();
     },
 
     showUsers() {
       return Meteor.users.find({});
-    }
+    },
   },
   setup() {
     const AdminUserAddModal = ref(false);

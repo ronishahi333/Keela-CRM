@@ -345,6 +345,10 @@ export default {
           console.error("Error saving organization:", error.reason);
         } else {
           console.log("Organization saved with ID:", result);
+          //the three lines below clears the forms fields after saving
+          this.organization.organizationName = "";
+          this.organization.organizationaddress = "",
+          this.organization.organizationnumber = "",
           this.toggleModal(); //Closes the Add Organization Modal
         }
       });
