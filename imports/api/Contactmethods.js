@@ -14,4 +14,16 @@ Meteor.methods({
       organizationID:userDetails._id
     });
   },
+
+  'contacts.remove'(contactId) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in to remove contacts.');
+    }
+    const contact = Contacts.findOne(contactId);
+    if (!contact) {
+      throw new Meteor.Error('not-found', 'Contact not found.');
+    }
+
+    Contacts.remove(contactId);
+  },
 });
