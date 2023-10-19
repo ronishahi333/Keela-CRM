@@ -26,4 +26,18 @@ Meteor.methods({
 
     Contacts.remove(contactId);
   },
+
+  'contacts.update'(contactId, updatedContactData) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in to edit contacts.');
+    }
+    const contact = Contacts.findOne(contactId);
+    if (!contact) {
+      throw new Meteor.Error('not-found', 'Contact not found.');
+    }
+    
+    Contacts.update(contactId, {
+      $set: updatedContactData,
+    });
+  }
 });

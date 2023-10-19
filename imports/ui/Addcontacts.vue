@@ -212,6 +212,32 @@
       </div>
     </div>
   </div>
+  <div
+    id="toast-success"
+    class="absolute top-0 right-0 mt-4 mr-4 z-50 flex items-center w-80 p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+    role="alert"
+    style="max-width: 500px; display: none"
+  >
+    <div class="flex items-center">
+      <div
+        class="inline-flex items-center justify-center flex-shrink-0 ml-5 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200"
+      >
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+          />
+        </svg>
+        <span class="sr-only">Check icon</span>
+      </div>
+      <div class="ml-2 text-sm font-normal">Contact saved successfully.</div>
+    </div>
+  </div>
 
   <!-- Add Contact Button with modal -->
 
@@ -224,6 +250,7 @@
           class="px-5 py-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
           type="button"
           @click="ContactToggleModal"
+          :disabled="permission === 'coordinator'"
         >
           Add Contact
         </button>
@@ -449,7 +476,7 @@
                         >
                           Edit Contact
                         </h3>
-                        <form class="space-y-6">
+                        <form class="space-y-6" @submit.prevent="updateContact">
                           <div>
                             <label
                               for="flname"
@@ -632,6 +659,7 @@ import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
 import { Contacts } from "../api/Contactcollection";
 import { Tags } from "../api/Tagcollection";
+//import { Accounts } from "meteor/accounts-base";
 
 export default {
   name: "addcontacts",
@@ -709,6 +737,13 @@ export default {
           console.error("Error saving contact:", error.reason);
         } else {
           console.log("Contact saved with ID:", result);
+          const toast = document.getElementById("toast-success");
+          toast.style.display = "block";
+
+          // Hide the toast after 2 seconds
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 1500);
           //the four lines below clears the forms fields after saving
           this.contact.fullName = "";
           this.contact.email = "";
@@ -721,13 +756,45 @@ export default {
 
     deleteContact(contactId) {
       // Call the 'contacts.remove' method on the server
-      Meteor.call('contacts.remove', contactId, (error) => {
+      Meteor.call("contacts.remove", contactId, (error) => {
         if (error) {
-          console.error('Error deleting contact:', error.reason);
+          console.error("Error deleting contact:", error.reason);
         } else {
-          console.log('Contact deleted successfully.');
+          console.log("Contact deleted successfully.");
         }
       });
+    },
+
+    updateContact(contactId) {
+      // Create an option object with the updated contact data
+      const updatedContactData = {
+        fullName: this.contact.fullName,
+        email: this.contact.email,
+        phoneNumber: this.contact.phoneNumber,
+        tags: {
+          tagName: this.contact.tags.tagName,
+          tagId: this.contact.tags._id,
+        },
+      };
+
+      Meteor.call(
+        "contacts.update",
+        contactId,
+        updatedContactData,
+        (error, result) => {
+          if (error) {
+            console.error("Error updating contact:", error.reason);
+          } else {
+            console.log("Contact updated successfully.");
+            // Clear the form fields after updating
+            this.contact.fullName = "";
+            this.contact.email = "";
+            this.contact.phoneNumber = "";
+            this.contact.tags = null;
+            this.ContactEditToggleModal(); // Closes the Edit Contact Modal
+          }
+        }
+      );
     },
 
     // getUser() {
