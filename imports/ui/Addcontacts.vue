@@ -412,7 +412,7 @@
                 {{ contactdetail.fullName }}
               </th>
               <td class="px-6 py-4">{{ contactdetail.email }}</td>
-              <td class="px-6 py-4">{{ contactdetail.phoneNumber }}</td>
+              <td class="px-6 py-4">{{ contactdetail._id }}</td>
               <td class="px-6 py-4">
                 {{
                   contactdetail.tags ? contactdetail.tags.tagName : "No Tags"
@@ -423,13 +423,13 @@
                   data-modal-toggle="authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
-                  @click="ContactEditToggleModal"
+                  @click="updateContact(contactdetail)"
                 >
                   Edit
                 </button>
 
                 <!-- Overlay -->
-                <div
+                <div  
                   v-if="ContactEditModal"
                   class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
                 ></div>
@@ -557,7 +557,7 @@
                   data-modal-toggle="authentication-modal"
                   class="ml-1 px-5 py-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
                   type="button"
-                  @click="ContactDeleteToggleModal"
+                  @click="deleteContact(contactdetail._id)"
                 >
                   Delete
                 </button>
@@ -629,7 +629,7 @@
                           data-modal-hide="popup-modal"
                           type="button"
                           class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2 justify-center"
-                          @click="deleteContact()"
+                          @click="deleteContact(contactdetail._id)"
                         >
                           Yes, I'm sure
                         </button>
@@ -669,33 +669,40 @@ export default {
         fullName: "",
         email: "",
         phoneNumber: "",
-        tags: "",
+        tags: {
+          tagName:""
+        },
       },
+      ContactEditModal:false
     };
   },
 
   setup() {
     const ContactAddModal = ref(false);
-    const ContactEditModal = ref(false);
+    //const ContactEditModal = ref(false);
     const ContactDeleteModal = ref(false);
 
     function ContactToggleModal() {
       ContactAddModal.value = !ContactAddModal.value;
     }
 
-    function ContactEditToggleModal() {
-      ContactEditModal.value = !ContactEditModal.value;
-    }
+    // function ContactEditToggleModal(contact) {
+    //   console.log(contact)
+    //   ContactEditModal.value = !ContactEditModal.value;
+    //   return contact
+    // }
 
-    function ContactDeleteToggleModal() {
+    function ContactDeleteToggleModal(contactID) {
       ContactDeleteModal.value = !ContactDeleteModal.value;
+      console.log("from ContactDeleteToggleModal",contactID)
+      
     }
 
     return {
       ContactAddModal,
       ContactToggleModal,
-      ContactEditModal,
-      ContactEditToggleModal,
+      // ContactEditModal,
+      // ContactEditToggleModal,
       ContactDeleteModal,
       ContactDeleteToggleModal,
     };
@@ -756,31 +763,46 @@ export default {
 
     deleteContact(contactId) {
       // Call the 'contacts.remove' method on the server
+      console.log(contactId)
       Meteor.call("contacts.remove", contactId, (error) => {
         if (error) {
           console.error("Error deleting contact:", error.reason);
         } else {
           console.log("Contact deleted successfully.");
+          //this.ContactDeleteToggleModal()
         }
       });
     },
 
-    updateContact(contactId) {
+    updateContact(contacts) {
+      console.log("Update Button Clicked",contacts)
+      this.ContactEditModal = true
       // Create an option object with the updated contact data
+      // const updatedContactData = {
+      //   fullName: this.contact.fullName,
+      //   email: this.contact.email,
+      //   phoneNumber: this.contact.phoneNumber,
+      //   tags: {
+      //     tagName: this.contact.tags.tagName,
+      //     tagId: this.contact.tags._id,
+      //   },
+      // };
       const updatedContactData = {
         fullName: this.contact.fullName,
         email: this.contact.email,
         phoneNumber: this.contact.phoneNumber,
         tags: {
           tagName: this.contact.tags.tagName,
-          tagId: this.contact.tags._id,
+          //tagId: this.contact.tags._id,
         },
       };
+      this.contact = {...contacts}
+      console.log(updatedContactData)
 
       Meteor.call(
         "contacts.update",
-        contactId,
-        updatedContactData,
+        contacts._id,
+        ...updatedContactData,
         (error, result) => {
           if (error) {
             console.error("Error updating contact:", error.reason);
@@ -795,7 +817,7 @@ export default {
           }
         }
       );
-    },
+   },
 
     // getUser() {
     //   const currentUser = Meteor.user();

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "./Home.vue";
+//import Home from "./Home.vue";
 import Addcontacts from "./Addcontacts.vue";
 import Tags from "./Tags.vue";
 import Users from "./Users.vue";
@@ -16,8 +16,8 @@ export const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
-      component: Home,
+      name: "login",
+      component: Userlogin,
     },
     {
       path: "/about",
@@ -54,11 +54,11 @@ export const router = createRouter({
       name: "adminusers",
       component: Adminusers,
     },
-    {
-      path: "/login",
-      name: "login",
-      component: Userlogin,
-    },
+    // {
+    //   path: "/login",
+    //   name: "login",
+    //   component: Userlogin,
+    // },
     {
       path: "/register",
       name: "register",
