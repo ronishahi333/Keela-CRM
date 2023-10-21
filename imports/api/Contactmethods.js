@@ -27,17 +27,27 @@ Meteor.methods({
     Contacts.remove(contactId);
   },
 
-  'contacts.update'(contactId, updatedContactData) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized', 'You must be logged in to edit contacts.');
-    }
-    const contact = Contacts.findOne(contactId);
-    if (!contact) {
-      throw new Meteor.Error('not-found', 'Contact not found.');
-    }
+  // 'contacts.update'(contactId, updatedContactData) {
+  //   if (!this.userId) {
+  //     throw new Meteor.Error('not-authorized', 'You must be logged in to edit contacts.');
+  //   }
+  //   const contact = Contacts.findOne(contactId);
+  //   if (!contact) {
+  //     throw new Meteor.Error('not-found', 'Contact not found.');
+  //   }
     
-    Contacts.update(contactId, {
-      $set: updatedContactData,
+  //   Contacts.update(contactId, {
+  //     $set: updatedContactData,
+  //   });
+  // },
+  'contacts.update'(contact) {
+    const userDetails = Meteor.user();
+    Contacts.update(contact._id, {
+      $set: {
+        ...contact,
+        modifiedBy: userDetails._id
+      },
     });
-  }
+    return 'Contact updated successfully';
+  },
 });

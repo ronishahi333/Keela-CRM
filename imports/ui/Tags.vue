@@ -493,6 +493,20 @@
                 <!-- Overlay -->
               </td>
             </tr>
+              <!-- <tr v-if="showTags.length === 0">
+                <td colspan="4" style="text-align: center">
+                  <div class="flex flex-col items-center justify-center h-100">
+                    <img
+                      src="/Notags.png"
+                      alt="No tags found"
+                      :style="{ height: '400px', width: '550px' }"
+                    />
+                    <p class="block mb-2 font-medium text-2xl text-gray-900 centered-text">
+                      No Tags Found
+                    </p>
+                  </div>
+                </td>
+              </tr> -->
           </tbody>
         </table>
       </div>

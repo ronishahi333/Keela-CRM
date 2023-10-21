@@ -587,6 +587,22 @@
                 </button>
               </td>
             </tr>
+            <!-- <tr v-if="showUsers.length === 0">
+              <td colspan="4" style="text-align: center">
+                <div class="flex flex-col items-center justify-center h-100">
+                  <img
+                    src="/Nousers.png"
+                    alt="No tags found"
+                    :style="{ height: '400px', width: '400px' }"
+                  />
+                  <p
+                    class="block mb-2 font-medium text-2xl text-gray-900 centered-text"
+                  >
+                    No Users Found
+                  </p>
+                </div>
+              </td>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -656,7 +672,7 @@ export default {
           this.selectedOrganization = "";
           this.email = "";
           this.password = "";
-          this.permission = ""; 
+          this.permission = "";
           this.UserToggleModal(); //Closes the Add Contact Modal
         }
       });

@@ -267,7 +267,9 @@
             </svg>
             <span class="sr-only">Error icon</span>
           </div>
-          <div class="ml-2 text-sm font-normal">Contact deleted successfully</div>
+          <div class="ml-2 text-sm font-normal">
+            Contact deleted successfully
+          </div>
         </div>
       </div>
     </div>
@@ -446,12 +448,8 @@
                 {{ contactdetail.fullName }}
               </th>
               <td class="px-6 py-4">{{ contactdetail.email }}</td>
-              <td class="px-6 py-4">{{ contactdetail._id }}</td>
-              <td class="px-6 py-4">
-                {{
-                  contactdetail.tags ? contactdetail.tags.tagName : "No Tags"
-                }}
-              </td>
+              <td class="px-6 py-4">{{ contactdetail.phoneNumber }}</td>
+              <td class="px-6 py-4">{{ contactdetail.tags.tagName }}</td>
               <td class="px-6 py-4">
                 <button
                   data-modal-toggle="authentication-modal"
@@ -485,7 +483,7 @@
                       <button
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        @click="ContactEditToggleModal"
+                        @click="ContactEditModal = false"
                       >
                         <svg
                           class="w-3 h-3"
@@ -597,6 +595,22 @@
                 </button>
               </td>
             </tr>
+            <!-- <tr v-if="showContacts.length === 0">
+              <td colspan="4" style="text-align: center">
+                <div class="flex flex-col items-center justify-center h-100">
+                  <img
+                    src="/Nocontacts.png"
+                    alt="No tags found"
+                    :style="{ height: '420px', width: '600px' }"
+                  />
+                  <p
+                    class="block mb-2 font-medium text-2xl text-gray-900 centered-text"
+                  >
+                    No Contacts Found
+                  </p>
+                </div>
+              </td>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -609,7 +623,6 @@ import { ref } from "vue";
 import { Meteor } from "meteor/meteor";
 import { Contacts } from "../api/Contactcollection";
 import { Tags } from "../api/Tagcollection";
-//import { Accounts } from "meteor/accounts-base";
 
 export default {
   name: "addcontacts",
@@ -723,32 +736,28 @@ export default {
     updateContact(contacts) {
       console.log("Update Button Clicked", contacts);
       this.ContactEditModal = true;
-      // Create an option object with the updated contact data
-      // const updatedContactData = {
-      //   fullName: this.contact.fullName,
-      //   email: this.contact.email,
-      //   phoneNumber: this.contact.phoneNumber,
-      //   tags: {
-      //     tagName: this.contact.tags.tagName,
-      //     tagId: this.contact.tags._id,
-      //   },
-      // };
       const updatedContactData = {
         fullName: this.contact.fullName,
         email: this.contact.email,
         phoneNumber: this.contact.phoneNumber,
         tags: {
           tagName: this.contact.tags.tagName,
-          //tagId: this.contact.tags._id,
+          tagId: this.contact.tags._id,
         },
       };
-      this.contact = { ...contacts };
+      this.contact = {
+        ...contacts,
+        // tags: {
+        //   tagName: this.contact.tags.tagName,
+        //   //tagId: this.contact.tags._id,
+        // }
+      };
       console.log(updatedContactData);
 
       Meteor.call(
         "contacts.update",
-        contacts._id,
-        ...updatedContactData,
+        contacts,
+        updatedContactData,
         (error, result) => {
           if (error) {
             console.error("Error updating contact:", error.reason);
@@ -759,7 +768,7 @@ export default {
             this.contact.email = "";
             this.contact.phoneNumber = "";
             this.contact.tags = null;
-            this.ContactEditToggleModal(); // Closes the Edit Contact Modal
+            this.ContactEditModal = false; // Closes the Edit Contact Modal
           }
         }
       );
