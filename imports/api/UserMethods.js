@@ -9,4 +9,9 @@ Meteor.methods({
       throw new Meteor.Error('Email already exists')
     }
   },
+
+  deleteUser(userId) {
+    Meteor.users.remove(userId);
+    return 'User deleted successfully';
+  },
 });

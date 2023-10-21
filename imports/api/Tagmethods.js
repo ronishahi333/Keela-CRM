@@ -11,4 +11,13 @@ Meteor.methods({
       organizationID:userDetails.profile.organizationId
     });
   },
+
+  'tags.remove'(tagId) {
+    const tag = Tags.findOne(tagId);
+    if (!tag) {
+      throw new Meteor.Error('not-found', 'tag not found.');
+    }
+
+    Tags.remove(tagId);
+  },
 });
