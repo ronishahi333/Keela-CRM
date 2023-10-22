@@ -1,4 +1,31 @@
 <template>
+  <div
+    id="toast-success"
+    class="absolute top-0 right-0 mt-4 mr-4 z-50 flex items-center w-80 p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+    role="alert"
+    style="max-width: 500px; display: none"
+  >
+    <div class="flex items-center">
+      <div
+        class="inline-flex items-center justify-center flex-shrink-0 ml-5 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200"
+      >
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+          />
+        </svg>
+        <span class="sr-only">Check icon</span>
+      </div>
+      <div class="ml-2 text-sm font-normal">User registered successfully.</div>
+    </div>
+  </div>
+
   <section class="bg-gray-50 dark:bg-gray-900">
     <div
       class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
@@ -25,6 +52,28 @@
           <form class="space-y-4 md:space-y-6" @submit.prevent="registerUser">
             <div>
               <label
+                for="orgname"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Organization Name</label
+              >
+              <select
+                name="orgname"
+                id="orgname"
+                v-model="selectedOrganization"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              >
+                <option
+                  v-for="organization in showOrganizations"
+                  v-bind:value="organization"
+                  v-bind:key="organization._id"
+                >
+                  {{ organization.organizationName }}
+                </option>
+              </select>
+            </div>
+            <div>
+              <label
                 for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >Your email</label
@@ -36,7 +85,7 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
                 required=""
-                v-model = "email"
+                v-model="email"
               />
             </div>
             <div>
@@ -52,8 +101,25 @@
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required=""
-                v-model ="password"
+                v-model="password"
               />
+            </div>
+            <div>
+              <label
+                for="permission"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Permission</label
+              >
+              <select
+                type="text"
+                name="permission"
+                v-model="permission"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                id="permission"
+              >
+                <option value="admin">Admin</option>
+                <option value="coordinator">Coordinator</option>
+              </select>
             </div>
             <button
               type="submit"
@@ -64,7 +130,7 @@
             <p class="text-sm font-light text-gray-700 dark:text-gray-400">
               Already have an account?
               <a
-                href="http://localhost:3000/login"
+                href="http://localhost:3000/"
                 class="font-medium text-blue-600 hover:underline dark:text-primary-500"
                 >Click me</a
               >
@@ -78,16 +144,28 @@
 
 
 <script>
+import { Organizations } from "../api/Orgcollections";
 export default {
+  data() {
+    return {
+      selectedOrganization: "",
+      email: "",
+      password: "",
+      permission: "",
+    };
+  },
+
   methods: {
     async registerUser(event) {
       event.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
       const userData = {
-        email,
-        password,
+        email: this.email,
+        password: this.password,
+        profile: {
+          organizationName: this.selectedOrganization.organizationName,
+          organizationId: this.selectedOrganization._id,
+          permission: this.permission,
+        },
       };
 
       try {
@@ -104,6 +182,19 @@ export default {
 
         // Registration successful
         console.log(`User registered with ID: ${userId}`);
+        const toast = document.getElementById("toast-success");
+        toast.style.display = "block";
+
+        // Hide the toast after 2 seconds
+        setTimeout(() => {
+          toast.style.display = "none";
+          this.$router.push({ name: "login" });
+        }, 1000);
+        //the four lines below clears the forms fields after saving
+        this.selectedOrganization = "";
+        this.email = "";
+        this.password = "";
+        this.permission = "";
         // Optionally, you can perform a redirect or show a success message
       } catch (error) {
         console.error(error);
@@ -111,7 +202,19 @@ export default {
       }
     },
   },
-
+  meteor: {
+    $subscribe: {
+      orgPublication: [],
+      users: [],
+    },
+    showOrganizations() {
+      const userId = Meteor.userId();
+      // if (userId) {
+      return Organizations.find({}).fetch();
+      // }
+      //return Organizations.find({}).fetch();
+    },
+  },
 };
 </script>
   
