@@ -493,7 +493,7 @@
                 <!-- Overlay -->
               </td>
             </tr>
-              <!-- <tr v-if="showTags.length === 0">
+              <tr v-if="(!showTags || showTags.length === 0) && !isLoading">
                 <td colspan="4" style="text-align: center">
                   <div class="flex flex-col items-center justify-center h-100">
                     <img
@@ -506,7 +506,7 @@
                     </p>
                   </div>
                 </td>
-              </tr> -->
+              </tr>
           </tbody>
         </table>
       </div>
@@ -520,6 +520,7 @@ import { Tags } from "../api/Tagcollection";
 export default {
   data() {
     return {
+      isLoading: true,
       tag: {
         tagName: "",
       },
@@ -612,6 +613,9 @@ export default {
       const userId = Meteor.userId();
       //const orgId = Meteor.user().profile.organizationId;
       if (userId) {
+        setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
         return Tags.find({}).fetch();
       }
     },

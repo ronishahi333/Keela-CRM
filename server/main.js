@@ -65,7 +65,7 @@ Meteor.startup(() => {
 
       // Create a new user document and insert it into MongoDB
       const userId = Accounts.createUser({
-        ...userData
+        ...userData,
         // email: userData.email,
         // password: userData.password,
         // profile: {
@@ -92,10 +92,10 @@ Meteor.publish("tagsPublication", function () {
   return Tags.find();
 });
 
-Meteor.publish("orgPublication", function(){
+Meteor.publish("orgPublication", function () {
   return Organizations.find();
-})
+});
 
-Meteor.publish('users', function () {
+Meteor.publish("users", function () {
   return Meteor.users.find({});
 });

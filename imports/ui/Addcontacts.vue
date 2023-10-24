@@ -595,12 +595,12 @@
                 </button>
               </td>
             </tr>
-            <!-- <tr v-if="showContacts.length === 0">
+            <tr v-if="(!showContacts || showContacts.length === 0) && !isLoading">
               <td colspan="4" style="text-align: center">
                 <div class="flex flex-col items-center justify-center h-100">
                   <img
                     src="/Nocontacts.png"
-                    alt="No tags found"
+                    alt="No contacts found"
                     :style="{ height: '420px', width: '600px' }"
                   />
                   <p
@@ -610,7 +610,7 @@
                   </p>
                 </div>
               </td>
-            </tr> -->
+            </tr>
           </tbody>
         </table>
       </div>
@@ -628,6 +628,7 @@ export default {
   name: "addcontacts",
   data() {
     return {
+      isLoading: true,
       contact: {
         fullName: "",
         email: "",
@@ -802,6 +803,9 @@ export default {
       //const organization = Meteor.user().profile.organizationId;
       //const organizationid = Meteor.user()._id
       if (userId) {
+        setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
         return Contacts.find({}).fetch();
       }
     },

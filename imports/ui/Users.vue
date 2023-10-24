@@ -587,7 +587,7 @@
                 </button>
               </td>
             </tr>
-            <!-- <tr v-if="showUsers.length === 0">
+            <tr v-if="(!showUsers || showUsers.length === 0) && !isLoading">
               <td colspan="4" style="text-align: center">
                 <div class="flex flex-col items-center justify-center h-100">
                   <img
@@ -602,7 +602,7 @@
                   </p>
                 </div>
               </td>
-            </tr> -->
+            </tr>
           </tbody>
         </table>
       </div>
@@ -618,6 +618,7 @@ export default {
     const user = Meteor.user();
 
     return {
+      isLoading: true,
       selectedOrganization: user ? user.profile.organizationName : "",
       email: "",
       password: "",
@@ -728,6 +729,9 @@ export default {
       // }
     },
     showUsers() {
+      setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
       return Meteor.users.find({});
     },
   },

@@ -8,8 +8,8 @@ import Admin from "./Admin.vue";
 import Adminusers from "./Adminusers.vue";
 import Userlogin from "./Userslogin.vue";
 import Test from "./Test.vue";
-import Userregister from "./Usersregister.vue"
-import Adminlogin from "./Adminlogin.vue"
+import Userregister from "./Usersregister.vue";
+import Pagenotfound from "./Pagenotfound.vue"
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -28,21 +28,30 @@ export const router = createRouter({
       path: "/dashboard/",
       name: "dashboard",
       component: Dashboard,
+      meta: { requiresAuth: true },
     },
     {
       path: "/addcontacts",
       name: "addcontacts",
       component: Addcontacts,
+      meta: { requiresAuth: true },
     },
     {
       path: "/tags",
       name: "tags",
       component: Tags,
+      meta: { requiresAuth: true },
     },
     {
       path: "/users",
       name: "users",
       component: Users,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: Userregister,
     },
     {
       path: "/admin",
@@ -54,20 +63,10 @@ export const router = createRouter({
       name: "adminusers",
       component: Adminusers,
     },
-    // {
-    //   path: "/login",
-    //   name: "login",
-    //   component: Userlogin,
-    // },
     {
-      path: "/register",
-      name: "register",
-      component: Userregister,
-    },
-    {
-      path: "/adminlogin",
-      name: "adminlogin",
-      component: Adminlogin,
+      path: "/:pathMatch(.*)*",
+      name: "pagenotfound",
+      component: Pagenotfound,
     },
     {
       path: "/test",
@@ -75,4 +74,21 @@ export const router = createRouter({
       component: Test,
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const userId = Meteor.userId();
+  if (to.path === "/" && userId) {
+    next("/dashboard");
+  } else if (to.path === "/dashboard" && !userId) {
+    next("/");
+  } else if (to.path === "/addcontacts" && !userId) {
+    next("/");
+  } else if (to.path === "/tags" && !userId) {
+    next("/");
+  } else if (to.path === "/users" && !userId) {
+    next("/");
+  } else {
+    next();
+  }
 });
