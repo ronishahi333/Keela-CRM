@@ -20,4 +20,14 @@ Meteor.methods({
 
     Tags.remove(tagId);
   },
+
+  'tags.update'(tag) {
+    const userDetails = Meteor.user();
+    Tags.update(tag._id, {
+      $set: {
+        ...tag,
+      },
+    });
+    return 'Tag updated successfully';
+  },
 });

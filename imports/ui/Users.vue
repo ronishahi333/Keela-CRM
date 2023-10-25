@@ -731,7 +731,7 @@ export default {
     showUsers() {
       setTimeout(() => {
             this.isLoading = false;
-          }, 500);
+          }, 1200);
       return Meteor.users.find({});
     },
   },

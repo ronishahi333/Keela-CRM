@@ -241,6 +241,34 @@
     </div>
   </div>
 
+  <!-- Edit Tag Toast Message -->
+  <div
+    id="toast-edit"
+    class="absolute top-0 right-0 mt-4 mr-4 z-50 flex items-center w-80 p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+    role="alert"
+    style="max-width: 500px; display: none"
+  >
+    <div class="flex items-center">
+      <div
+        class="inline-flex items-center justify-center flex-shrink-0 ml-5 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200"
+      >
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+          />
+        </svg>
+        <span class="sr-only">Check icon</span>
+      </div>
+      <div class="ml-2 text-sm font-normal">Tag updated successfully</div>
+    </div>
+  </div>
+
   <!-- Delete Tag Toast Message -->
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
@@ -364,7 +392,7 @@
     </div>
   </div>
 
-  <!-- Tags -->
+  <!-- Action buttons Tags -->
   <div class="grid grid-cols-6 mt-5">
     <div class="col-start-2 col-span-5">
       <div class="relative overflow-x-auto">
@@ -400,7 +428,7 @@
                   data-modal-toggle="authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
-                  @click="TagEditToggleModal"
+                  @click="openEditTagModal(tagname)"
                 >
                   Edit
                 </button>
@@ -428,7 +456,7 @@
                       <button
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        @click="TagEditToggleModal"
+                        @click="closeModal()"
                       >
                         <svg
                           class="w-3 h-3"
@@ -453,7 +481,7 @@
                         >
                           Edit Tag
                         </h3>
-                        <form class="space-y-6">
+                        <form class="space-y-6" @submit.prevent="updateTag">
                           <div>
                             <label
                               for="tname"
@@ -493,20 +521,22 @@
                 <!-- Overlay -->
               </td>
             </tr>
-              <tr v-if="(!showTags || showTags.length === 0) && !isLoading">
-                <td colspan="4" style="text-align: center">
-                  <div class="flex flex-col items-center justify-center h-100">
-                    <img
-                      src="/Notags.png"
-                      alt="No tags found"
-                      :style="{ height: '400px', width: '550px' }"
-                    />
-                    <p class="block mb-2 font-medium text-2xl text-gray-900 centered-text">
-                      No Tags Found
-                    </p>
-                  </div>
-                </td>
-              </tr>
+            <tr v-if="(!showTags || showTags.length === 0) && !isLoading">
+              <td colspan="4" style="text-align: center">
+                <div class="flex flex-col items-center justify-center h-100">
+                  <img
+                    src="/Notags.png"
+                    alt="No tags found"
+                    :style="{ height: '400px', width: '550px' }"
+                  />
+                  <p
+                    class="block mb-2 font-medium text-2xl text-gray-900 centered-text"
+                  >
+                    No Tags Found
+                  </p>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -515,7 +545,6 @@
 </template>
 <script>
 import { ref } from "vue";
-//import { Meteor } from "meteor/meteor";
 import { Tags } from "../api/Tagcollection";
 export default {
   data() {
@@ -524,25 +553,19 @@ export default {
       tag: {
         tagName: "",
       },
+      TagEditModal: false,
     };
   },
   setup() {
     const TagAddModal = ref(false);
-    const TagEditModal = ref(false);
 
     function TagToggleModal() {
       TagAddModal.value = !TagAddModal.value;
     }
 
-    function TagEditToggleModal() {
-      TagEditModal.value = !TagEditModal.value;
-    }
-
     return {
       TagAddModal,
       TagToggleModal,
-      TagEditModal,
-      TagEditToggleModal,
     };
   },
 
@@ -550,6 +573,10 @@ export default {
     openDropdown() {
       // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
+    },
+    closeModal() {
+      this.TagEditModal = false;
+      this.tag.tagName = "";
     },
     closeDropdown() {
       // Use $refs to access the dropdown element and hide it
@@ -581,7 +608,7 @@ export default {
             toast.style.display = "none";
           }, 1500);
           this.tag.tagName = ""; // Clears the form field after submitting
-          this.TagToggleModal(); //Closes the Add Contact Modal
+          this.TagToggleModal(); //Closes the Edit Contact Modal
         }
       });
     },
@@ -603,6 +630,36 @@ export default {
         }
       });
     },
+
+    openEditTagModal(tags) {
+      console.log("Edit Button Clicked", tags);
+      this.TagEditModal = true;
+      this.tag = {...tags};
+    },
+
+    updateTag() {
+      const updatedTagData = {
+        _id: this.tag._id,
+        tagName: this.tag.tagName,
+      };
+
+      Meteor.call("tags.update", updatedTagData, (error, result) => {
+        if (error) {
+          console.error("Error updating tag:", error.reason);
+        } else {
+          console.log("Tag updated successfully.");
+          const toast = document.getElementById("toast-edit");
+          toast.style.display = "block";
+          // Hides the toast after 2 seconds
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 1500);
+          // Clear the form fields after updating
+          this.tag.tagName = "";
+          this.TagEditModal = false; // Closes the Edit Tag Modal
+        }
+      });
+    },
   },
 
   meteor: {
@@ -614,8 +671,8 @@ export default {
       //const orgId = Meteor.user().profile.organizationId;
       if (userId) {
         setTimeout(() => {
-            this.isLoading = false;
-          }, 500);
+          this.isLoading = false;
+        }, 1200);
         return Tags.find({}).fetch();
       }
     },
