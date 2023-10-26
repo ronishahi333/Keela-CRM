@@ -138,6 +138,34 @@
     </div>
   </div>
 
+  <!-- Edit User Toast Message -->
+  <div
+    id="toast-edit"
+    class="absolute top-0 right-0 mt-4 mr-4 z-50 flex items-center w-80 p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+    role="alert"
+    style="max-width: 500px; display: none"
+  >
+    <div class="flex items-center">
+      <div
+        class="inline-flex items-center justify-center flex-shrink-0 ml-5 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200"
+      >
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+          />
+        </svg>
+        <span class="sr-only">Check icon</span>
+      </div>
+      <div class="ml-2 text-sm font-normal">Contact updated successfully</div>
+    </div>
+  </div>
+
   <!-- Delete User Toast Message -->
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
@@ -240,16 +268,16 @@
                     <select
                       name="orgname"
                       id="orgname"
-                      v-model="selectedOrganization"
+                      v-model="userdata.selectedOrganization"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     >
                       <option
-                        v-for="organization in showOrganizations"
-                        v-bind:value="organization"
-                        v-bind:key="organization._id"
+                        v-for="organizationname in showOrganizations"
+                        v-bind:value="organizationname"
+                        v-bind:key="organizationname._id"
                       >
-                        {{ organization.organizationName }}
+                        {{ organizationname.organizationName }}
                       </option>
                     </select>
                   </div>
@@ -263,7 +291,7 @@
                       type="email"
                       name="email"
                       id="email"
-                      v-model="email"
+                      v-model="userdata.email"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -277,7 +305,7 @@
                       type="password"
                       name="password"
                       id="password"
-                      v-model="password"
+                      v-model="userdata.password"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -290,7 +318,7 @@
                     <select
                       type="text"
                       name="permission"
-                      v-model="permission"
+                      v-model="userdata.permission"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       id="permission"
                     >
@@ -349,21 +377,21 @@
                   data-modal-toggle="authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
-                  @click="AdminUserEditToggleModal"
+                  @click="openEditUserModal(user)"
                 >
                   Edit
                 </button>
 
                 <!-- Overlay -->
                 <div
-                  v-if="AdminUserEditModal"
+                  v-if="UserEditModal"
                   class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
                 ></div>
 
                 <!-- Main modal -->
                 <div
                   id="edit-authentication-modal"
-                  :class="{ hidden: !AdminUserEditModal }"
+                  :class="{ hidden: !UserEditModal }"
                   tabindex="-1"
                   aria-hidden="true"
                   class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex items-center justify-center"
@@ -377,7 +405,7 @@
                       <button
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        @click="AdminUserEditToggleModal"
+                        @click="closeModal()"
                       >
                         <svg
                           class="w-3 h-3"
@@ -402,7 +430,7 @@
                         >
                           Edit User
                         </h3>
-                        <form class="space-y-6">
+                        <form class="space-y-6"  @submit.prevent="updateUser">
                           <div>
                             <label
                               for="flname"
@@ -412,13 +440,13 @@
                             <select
                               name="orgname"
                               id="orgname"
-                              v-model="selectedOrganization"
+                              v-model="userdata.selectedOrganization"
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                               required
                             >
                               <option
                                 v-for="organization in showOrganizations"
-                                v-bind:value="organization"
+                                v-bind:value="organization.organizationName"
                                 v-bind:key="organization._id"
                               >
                                 {{ organization.organizationName }}
@@ -435,7 +463,7 @@
                               type="email"
                               name="email"
                               id="email"
-                              v-model="email"
+                              v-model="userdata.email"
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             />
                           </div>
@@ -449,7 +477,7 @@
                               type="password"
                               name="password"
                               id="password"
-                              v-model="password"
+                              v-model="userdata.password"
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             />
                           </div>
@@ -462,7 +490,7 @@
                             <select
                               type="text"
                               name="permission"
-                              v-model="permission"
+                              v-model="userdata.permission"
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                               id="permission"
                             >
@@ -507,22 +535,33 @@ import { Organizations } from "../api/Orgcollections";
 export default {
   data() {
     return {
-      selectedOrganization: "",
-      email: "",
-      password: "",
-      permission: "",
+      userdata: {
+        selectedOrganization: "",
+        email: "",
+        password: "",
+        permission: "",
+      },
+      UserEditModal: false,
     };
   },
 
   methods: {
+    closeModal() {
+      this.UserEditModal = false;
+      this.userdata.selectedOrganization = "";
+      this.userdata.email = "";
+      this.userdata.password = "";
+      this.userdata.permission = "";
+    },
+
     saveUsers() {
       const option = {
-        email: this.email,
-        password: this.password,
+        email: this.userdata.email,
+        password: this.userdata.password,
         profile: {
-          organizationName: this.selectedOrganization.organizationName,
-          organizationId: this.selectedOrganization._id,
-          permission: this.permission,
+          organizationName: this.userdata.selectedOrganization.organizationName,
+          organizationId: this.userdata.selectedOrganization._id,
+          permission: this.userdata.permission,
         },
       };
       Meteor.call("insertUser", option, (error, result) => {
@@ -538,10 +577,10 @@ export default {
             toast.style.display = "none";
           }, 1500);
           //the four lines below clears the forms fields after saving
-          this.selectedOrganization = "";
-          this.email = "";
-          this.password = "";
-          this.permission = "";
+          this.userdata.selectedOrganization = "";
+          this.userdata.email = "";
+          this.userdata.password = "";
+          this.userdata.permission = "";
           this.AdminUserToggleModal(); //Closes the Add Contact Modal
         }
       });
@@ -561,6 +600,43 @@ export default {
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
+        }
+      });
+    },
+
+    openEditUserModal(users) {
+      console.log("Edit Button Clicked", users);
+      this.UserEditModal = true;
+      this.userdata = { ...users };
+    },
+
+    updateUser() {
+      const updatedUserData = {
+        _id: this.userdata._id,
+        selectedOrganization: this.userdata.selectedOrganization,
+        email: this.userdata.email,
+        password: this.userdata.password,
+        permission: this.userdata.permission,
+      };
+      console.log("data")
+
+      Meteor.call("updateUser", updatedUserData, (error, result) => {
+        if (error) {
+          console.error("Error updating user:", error.reason);
+        } else {
+          console.log("User updated successfully.");
+          const toast = document.getElementById("toast-edit");
+          toast.style.display = "block";
+          // Hides the toast after 2 seconds
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 1500);
+          // Clear the form fields after updating
+          this.userdata.selectedOrganization = "";
+          this.userdata.email = "";
+          this.userdata.password = "";
+          this.userdata.permission = "";
+          this.UserEditModal = false; // Closes the Edit Usesr Modal
         }
       });
     },
@@ -585,21 +661,14 @@ export default {
   },
   setup() {
     const AdminUserAddModal = ref(false);
-    const AdminUserEditModal = ref(false);
 
     function AdminUserToggleModal() {
       AdminUserAddModal.value = !AdminUserAddModal.value;
     }
 
-    function AdminUserEditToggleModal() {
-      AdminUserEditModal.value = !AdminUserEditModal.value;
-    }
-
     return {
       AdminUserAddModal,
       AdminUserToggleModal,
-      AdminUserEditModal,
-      AdminUserEditToggleModal,
     };
   },
 };

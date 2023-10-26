@@ -308,14 +308,13 @@
 
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
-      <div>
+      <div><!--v-if="currentUser && currentUser.permission == 'admin'" -->
         <!-- Modal toggle button -->
         <button
           data-modal-toggle="add-authentication-modal"
           class="px-5 py-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
           type="button"
           @click="ContactToggleModal"
-          :disabled="permission === 'coordinator'"
         >
           Add Contact
         </button>
@@ -683,6 +682,10 @@ export default {
     };
   },
 
+  created() {
+        this.getUser();
+    },
+
   methods: {
     openDropdown() {
       // Use $refs to access the dropdown element and show it
@@ -794,21 +797,18 @@ export default {
       });
     },
 
-    // getUser() {
-    //   const currentUser = Meteor.user();
-    //   if (currentUser) {
-    //     this.currentUser = {
-    //       org: currentUser.profile.organizationName,
-    //       id: currentUser._id,
-    //       // orgId: currentUser.profile.organizationId
-    //     };
-    //   }
-    // },
+    getUser() {
+      const currentUser = Meteor.user();
+      if (currentUser) {
+        this.currentUser = {
+          org: currentUser.profile.organizationName,
+          permission: currentUser.profile.permission,
+          id: currentUser._id,
+          orgId: currentUser.profile.organizationId
+        };
+      }
+    },
   },
-
-  // created() {
-  //       this.getUser();
-  //   },
 
   meteor: {
     $subscribe: {

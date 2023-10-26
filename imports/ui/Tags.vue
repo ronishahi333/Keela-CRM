@@ -422,7 +422,7 @@
                 {{ tagname.tagName }}
               </th>
               <td class="px-6 py-4"></td>
-              <td class="px-6 py-4"></td>
+              <td class="px-6 py-4"></td> 
               <td class="px-6 py-4">
                 <button
                   data-modal-toggle="authentication-modal"
@@ -673,6 +673,7 @@ export default {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
+        //return Tags.find({organizationId: orgId}).fetch();
         return Tags.find({}).fetch();
       }
     },

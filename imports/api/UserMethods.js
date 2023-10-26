@@ -14,4 +14,14 @@ Meteor.methods({
     Meteor.users.remove(userId);
     return 'User deleted successfully';
   },
+
+  updateUser(data) {
+    Meteor.users.update(
+      { _id: data.userId },
+      {
+        $set: {
+          'profile.permission': data.updates['profile.permission'],
+        },
+      })
+  }
 });
