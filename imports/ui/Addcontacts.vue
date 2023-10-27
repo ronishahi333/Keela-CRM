@@ -377,6 +377,7 @@
                       name="flname"
                       id="flname"
                       v-model="contact.fullName"
+                      placeholder = "Marry Queen"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     />
@@ -392,6 +393,7 @@
                       name="email"
                       id="email"
                       v-model="contact.email"
+                      placeholder = "queen783@gmail.com"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -406,6 +408,7 @@
                       name="phonenumber"
                       id="phonenumber"
                       v-model="contact.phoneNumber"
+                      placeholder = "44653135465"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -819,13 +822,14 @@ export default {
     showContacts() {
       const userId = Meteor.userId();
       //const userDetails = Meteor.user();
-      const organizationName = Meteor.user().profile.organizationName;
-      const organizationId = Meteor.user().profile.organizationId
+      //const organizationName = Meteor.user().profile.organizationName;
+      //const organizationId = Meteor.user().profile.organizationId
       if (userId) {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
-        return Contacts.find({organizationID:organizationId}).fetch();
+        return Contacts.find({}).fetch();
+        //return Contacts.find({organizationID:organizationId}).fetch();
       }
     },
 

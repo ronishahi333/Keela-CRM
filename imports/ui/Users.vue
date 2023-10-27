@@ -240,6 +240,34 @@
     </div>
   </div>
 
+  <!-- Edit User Toast Message -->
+  <div
+    id="toast-edit"
+    class="absolute top-0 right-0 mt-4 mr-4 z-50 flex items-center w-80 p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+    role="alert"
+    style="max-width: 500px; display: none"
+  >
+    <div class="flex items-center">
+      <div
+        class="inline-flex items-center justify-center flex-shrink-0 ml-5 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200"
+      >
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+          />
+        </svg>
+        <span class="sr-only">Check icon</span>
+      </div>
+      <div class="ml-2 text-sm font-normal">User updated successfully</div>
+    </div>
+  </div>
+
   <!-- Delete User Toast Message -->
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
@@ -343,7 +371,7 @@
                     <select
                       name="orgname"
                       id="orgname"
-                      v-model="selectedOrganization"
+                      v-model="userdata.selectedOrganization"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     >
@@ -362,7 +390,8 @@
                       type="email"
                       name="email"
                       id="email"
-                      v-model="email"
+                      v-model="userdata.email"
+                      placeholder="spanish786@gmail.com"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -376,7 +405,8 @@
                       type="password"
                       name="pass"
                       id="pass"
-                      v-model="password"
+                      v-model="userdata.password"
+                      placeholder="*******"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -390,7 +420,7 @@
                       type="text"
                       name="permission"
                       id="permission"
-                      v-model="permission"
+                      v-model="userdata.permission"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     >
                       <option value="admin">Admin</option>
@@ -448,7 +478,7 @@
                   data-modal-toggle="authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
-                  @click="UserEditToggleModal"
+                  @click="openEditUserModal(user)"
                 >
                   Edit
                 </button>
@@ -476,7 +506,7 @@
                       <button
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        @click="UserEditToggleModal"
+                        @click="closeModal()"
                       >
                         <svg
                           class="w-3 h-3"
@@ -501,53 +531,7 @@
                         >
                           Edit User
                         </h3>
-                        <form class="space-y-6">
-                          <div>
-                            <label
-                              for="orgname"
-                              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              >Organization Name</label
-                            >
-                            <select
-                              name="orgname"
-                              id="eorgname"
-                              v-model="selectedOrganization"
-                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                              required
-                            >
-                              <option :value="selectedOrganization">
-                                {{ selectedOrganization }}
-                              </option>
-                            </select>
-                          </div>
-                          <div>
-                            <label
-                              for="email"
-                              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              >Primary Email</label
-                            >
-                            <input
-                              type="email"
-                              name="email"
-                              id="eemail"
-                              v-model="email"
-                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                            />
-                          </div>
-                          <div>
-                            <label
-                              for="phonenumber"
-                              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              >Password</label
-                            >
-                            <input
-                              type="password"
-                              name="pass"
-                              id="epass"
-                              v-model="password"
-                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                            />
-                          </div>
+                        <form class="space-y-6" @submit.prevent="updateUser">
                           <div>
                             <label
                               for="permission"
@@ -558,7 +542,7 @@
                               type="text"
                               name="permission"
                               id="epermission"
-                              v-model="permission"
+                              v-model="userdata.permission"
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             >
                               <option value="eadmin">Admin</option>
@@ -616,45 +600,48 @@ import { Organizations } from "../api/Orgcollections";
 export default {
   data() {
     const user = Meteor.user();
-
     return {
       isLoading: true,
-      selectedOrganization: user ? user.profile.organizationName : "",
-      email: "",
-      password: "",
-      permission: "",
+      userdata: {
+        selectedOrganization: user ? user.profile.organizationName : "",
+        email: "",
+        password: "",
+        permission: "",
+      },
+      UserEditModal: false,
     };
   },
 
   setup() {
     const UserAddModal = ref(false);
-    const UserEditModal = ref(false);
 
     function UserToggleModal() {
       UserAddModal.value = !UserAddModal.value;
     }
 
-    function UserEditToggleModal() {
-      UserEditModal.value = !UserEditModal.value;
-    }
-
     return {
       UserAddModal,
       UserToggleModal,
-      UserEditModal,
-      UserEditToggleModal,
     };
   },
 
   methods: {
+    closeModal() {
+      this.UserEditModal = false;
+      this.userdata.selectedOrganization = "";
+      this.userdata.email = "";
+      this.userdata.password = "";
+      this.userdata.permission = "";
+    },
+
     saveUsers() {
       const option = {
-        email: this.email,
-        password: this.password,
+        email: this.userdata.email,
+        password: this.userdata.password,
         profile: {
-          organizationName: this.selectedOrganization.organizationName,
-          organizationId: this.selectedOrganization._id,
-          permission: this.permission,
+          organizationName: this.userdata.selectedOrganization.organizationName,
+          organizationId: this.userdata.selectedOrganization._id,
+          permission: this.userdata.permission,
         },
       };
       Meteor.call("insertUser", option, (error, result) => {
@@ -670,10 +657,10 @@ export default {
             toast.style.display = "none";
           }, 1500);
           //the four lines below clears the forms fields after saving
-          this.selectedOrganization = "";
-          this.email = "";
-          this.password = "";
-          this.permission = "";
+          this.userdata.selectedOrganization = "";
+          this.userdata.email = "";
+          this.userdata.password = "";
+          this.userdata.permission = "";
           this.UserToggleModal(); //Closes the Add Contact Modal
         }
       });
@@ -695,6 +682,42 @@ export default {
           }, 1500);
         }
       });
+    },
+
+    openEditUserModal(users) {
+      console.log("Edit Button Clicked", users);
+      this.UserEditModal = true;
+      this.userdata.permission = users.profile.permission;
+    },
+
+    updateUser() {
+      const updatedUserData = {
+        userId: this.userdata._id,
+        //_id: this.userdata._id,
+        // selectedOrganization: this.userdata.selectedOrganization,
+        // email: this.userdata.email,
+        // password: this.userdata.password,
+        permission: this.userdata.permission,
+      };
+
+      Meteor.call(
+        "updateUser",
+        { updates: updatedUserData },
+        (error, result) => {
+          if (error) {
+            console.error("Error updating user:", error.reason);
+          } else {
+            console.log("User updated successfully.");
+            const toast = document.getElementById("toast-edit");
+            toast.style.display = "block";
+            // Hides the toast after 2 seconds
+            setTimeout(() => {
+              toast.style.display = "none";
+            }, 1500);
+            this.UserEditModal = false; // Closes the Edit Usesr Modal
+          }
+        }
+      );
     },
 
     openDropdown() {
@@ -730,8 +753,8 @@ export default {
     },
     showUsers() {
       setTimeout(() => {
-            this.isLoading = false;
-          }, 1200);
+        this.isLoading = false;
+      }, 1200);
       return Meteor.users.find({});
     },
   },

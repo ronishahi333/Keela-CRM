@@ -162,7 +162,7 @@
         </svg>
         <span class="sr-only">Check icon</span>
       </div>
-      <div class="ml-2 text-sm font-normal">Contact updated successfully</div>
+      <div class="ml-2 text-sm font-normal">User updated successfully</div>
     </div>
   </div>
 
@@ -292,6 +292,7 @@
                       name="email"
                       id="email"
                       v-model="userdata.email"
+                      placeholder = "hitler999@gmail.com"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -306,6 +307,7 @@
                       name="password"
                       id="password"
                       v-model="userdata.password"
+                      placeholder = "********"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -430,57 +432,7 @@
                         >
                           Edit User
                         </h3>
-                        <form class="space-y-6"  @submit.prevent="updateUser">
-                          <div>
-                            <label
-                              for="flname"
-                              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              >Organization Name</label
-                            >
-                            <select
-                              name="orgname"
-                              id="orgname"
-                              v-model="userdata.selectedOrganization"
-                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                              required
-                            >
-                              <option
-                                v-for="organization in showOrganizations"
-                                v-bind:value="organization.organizationName"
-                                v-bind:key="organization._id"
-                              >
-                                {{ organization.organizationName }}
-                              </option>
-                            </select>
-                          </div>
-                          <div>
-                            <label
-                              for="email"
-                              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              >Primary Email</label
-                            >
-                            <input
-                              type="email"
-                              name="email"
-                              id="email"
-                              v-model="userdata.email"
-                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                            />
-                          </div>
-                          <div>
-                            <label
-                              for="email"
-                              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              >Password</label
-                            >
-                            <input
-                              type="password"
-                              name="password"
-                              id="password"
-                              v-model="userdata.password"
-                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                            />
-                          </div>
+                        <form class="space-y-6" @submit.prevent="updateUser">
                           <div>
                             <label
                               for="permission"
@@ -510,6 +462,7 @@
                   </div>
                 </div>
 
+                <!--v-if="currentUser.id !== user._id"-->
                 <button
                   data-modal-toggle="authentication-modal"
                   class="ml-1 px-5 py-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
@@ -518,7 +471,6 @@
                 >
                   Delete
                 </button>
-
               </td>
             </tr>
           </tbody>
@@ -544,7 +496,23 @@ export default {
     };
   },
 
+  created() {
+    this.getUser();
+  },
+
   methods: {
+    getUser() {
+      const currentUser = Meteor.user();
+      if (currentUser) {
+        this.currentUser = {
+          org: currentUser.profile.organizationName,
+          permission: currentUser.profile.permission,
+          id: currentUser._id,
+          orgId: currentUser.profile.organizationId,
+        };
+      }
+    },
+
     closeModal() {
       this.UserEditModal = false;
       this.userdata.selectedOrganization = "";
@@ -606,38 +574,37 @@ export default {
     openEditUserModal(users) {
       console.log("Edit Button Clicked", users);
       this.UserEditModal = true;
-      this.userdata = { ...users };
+      this.userdata.permission = users.profile.permission;
     },
 
     updateUser() {
       const updatedUserData = {
-        _id: this.userdata._id,
-        selectedOrganization: this.userdata.selectedOrganization,
-        email: this.userdata.email,
-        password: this.userdata.password,
+        userId: this.userdata._id,
+        //_id: this.userdata._id,
+        // selectedOrganization: this.userdata.selectedOrganization,
+        // email: this.userdata.email,
+        // password: this.userdata.password,
         permission: this.userdata.permission,
       };
-      console.log("data")
 
-      Meteor.call("updateUser", updatedUserData, (error, result) => {
-        if (error) {
-          console.error("Error updating user:", error.reason);
-        } else {
-          console.log("User updated successfully.");
-          const toast = document.getElementById("toast-edit");
-          toast.style.display = "block";
-          // Hides the toast after 2 seconds
-          setTimeout(() => {
-            toast.style.display = "none";
-          }, 1500);
-          // Clear the form fields after updating
-          this.userdata.selectedOrganization = "";
-          this.userdata.email = "";
-          this.userdata.password = "";
-          this.userdata.permission = "";
-          this.UserEditModal = false; // Closes the Edit Usesr Modal
+      Meteor.call(
+        "updateUser",
+        {updates: updatedUserData },
+        (error, result) => {
+          if (error) {
+            console.error("Error updating user:", error.reason);
+          } else {
+            console.log("User updated successfully.");
+            const toast = document.getElementById("toast-edit");
+            toast.style.display = "block";
+            // Hides the toast after 2 seconds
+            setTimeout(() => {
+              toast.style.display = "none";
+            }, 1500);
+            this.UserEditModal = false; // Closes the Edit Usesr Modal
+          }
         }
-      });
+      );
     },
   },
 
