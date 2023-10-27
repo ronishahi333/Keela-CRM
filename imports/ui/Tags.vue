@@ -318,7 +318,7 @@
         <!-- Overlay -->
         <div
           v-if="TagAddModal"
-          class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
+          class="fixed inset-0 z-40 bg-gray-900 opacity-40 flex items-center justify-center"
         ></div>
 
         <!-- Main modal -->
@@ -364,14 +364,14 @@
                 <form class="space-y-6" @submit.prevent="savetags">
                   <div>
                     <label
-                      for="tname"
+                      for="name"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Tag Name</label
                     >
                     <input
                       type="text"
-                      name="tname"
-                      id="tname"
+                      name="name"
+                      id="name"
                       v-model="tag.tagName"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
@@ -436,7 +436,7 @@
                 <!-- Overlay -->
                 <div
                   v-if="TagEditModal"
-                  class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
+                  class="fixed inset-0 z-40 bg-gray-900 opacity-10 flex items-center justify-center"
                 ></div>
 
                 <!-- Main modal -->
@@ -517,8 +517,6 @@
                 >
                   Delete
                 </button>
-
-                <!-- Overlay -->
               </td>
             </tr>
             <tr v-if="(!showTags || showTags.length === 0) && !isLoading">
@@ -560,6 +558,7 @@ export default {
     const TagAddModal = ref(false);
 
     function TagToggleModal() {
+      console.log(this.tag)
       TagAddModal.value = !TagAddModal.value;
     }
 
@@ -595,6 +594,7 @@ export default {
     },
 
     savetags() {
+      console.log(this.tag)
       Meteor.call("tags.insert", this.tag, (error, result) => {
         if (error) {
           console.error("Error saving tag:", error.reason);
@@ -655,7 +655,8 @@ export default {
             toast.style.display = "none";
           }, 1500);
           // Clear the form fields after updating
-          this.tag.tagName = "";
+          this.tag._id = "";
+          this.tag.tagName="";
           this.TagEditModal = false; // Closes the Edit Tag Modal
         }
       });

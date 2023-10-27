@@ -230,7 +230,7 @@
         <!-- Overlay -->
         <div
           v-if="isModalOpen"
-          class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
+          class="fixed inset-0 z-40 bg-gray-900 opacity-40 flex items-center justify-center"
         ></div>
 
         <!-- Main modal -->
@@ -382,7 +382,7 @@
                 <!-- Overlay -->
                 <div
                   v-if="OrganizationEditModal"
-                  class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
+                  class="fixed inset-0 z-40 bg-gray-900 opacity-10 flex items-center justify-center"
                 ></div>
 
                 <!-- Main modal -->
@@ -497,7 +497,6 @@
                   Delete
                 </button>
 
-                <!-- Overlay -->
               </td>
             </tr>
           </tbody>

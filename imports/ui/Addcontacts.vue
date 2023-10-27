@@ -322,7 +322,7 @@
         <!-- Overlay -->
         <div
           v-if="ContactAddModal"
-          class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
+          class="fixed inset-0 z-40 bg-gray-900 opacity-40 flex items-center justify-center"
         ></div>
 
         <!-- Main modal -->
@@ -480,7 +480,7 @@
               <td class="px-6 py-4">{{ contactdetail.tagName }}</td>
               <td class="px-6 py-4">
                 <button
-                  data-modal-toggle="authentication-modal"
+                  data-modal-toggle="edit-authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
                   @click="openEditContactModal(contactdetail)"
@@ -491,7 +491,7 @@
                 <!-- Overlay -->
                 <div
                   v-if="ContactEditModal"
-                  class="fixed inset-0 z-40 bg-gray-900 opacity-50 flex items-center justify-center"
+                  class="fixed inset-0 z-40 bg-gray-900 opacity-10 flex items-center justify-center"
                 ></div>
 
                 <!-- Main modal -->
@@ -819,13 +819,13 @@ export default {
     showContacts() {
       const userId = Meteor.userId();
       //const userDetails = Meteor.user();
-      //const organization = Meteor.user().profile.organizationId;
-      //const organizationid = Meteor.user()._id
+      const organizationName = Meteor.user().profile.organizationName;
+      const organizationId = Meteor.user().profile.organizationId
       if (userId) {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
-        return Contacts.find({}).fetch();
+        return Contacts.find({organizationID:organizationId}).fetch();
       }
     },
 
