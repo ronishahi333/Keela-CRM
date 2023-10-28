@@ -300,6 +300,7 @@
     </div>
   </div>
 
+
   <!-- Add Users Button with modal -->
 
   <div class="grid grid-cols-6">
@@ -368,15 +369,16 @@
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Organization Name</label
                     >
-                    <select
+                   <select
                       name="orgname"
                       id="orgname"
                       v-model="userdata.selectedOrganization"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
+                      selected
                     >
-                      <option :value="selectedOrganization">
-                        {{ selectedOrganization }}
+                      <option>
+                        abd
                       </option>
                     </select>
                   </div>
@@ -423,8 +425,8 @@
                       v-model="userdata.permission"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     >
-                      <option value="admin">Admin</option>
-                      <option value="coordinator">Coordinator</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Coordinator">Coordinator</option>
                     </select>
                   </div>
                   <button
@@ -545,8 +547,8 @@
                               v-model="userdata.permission"
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             >
-                              <option value="eadmin">Admin</option>
-                              <option value="ecoordinator">Coordinator</option>
+                              <option value="Admin">Admin</option>
+                              <option value="Coordinator">Coordinator</option>
                             </select>
                           </div>
                           <button
@@ -609,6 +611,7 @@ export default {
         permission: "",
       },
       UserEditModal: false,
+      currentUser:null
     };
   },
 
@@ -625,7 +628,23 @@ export default {
     };
   },
 
+  created() {
+    this.getUser();
+  },
+
   methods: {
+    getUser() {
+      const currentUser = Meteor.user();
+      if (currentUser) {
+        this.currentUser = {
+          org: currentUser.profile.organizationName,
+          permission: currentUser.profile.permission,
+          id: currentUser._id,
+          orgId: currentUser.profile.organizationId,
+        };
+      }
+    },
+
     closeModal() {
       this.UserEditModal = false;
       this.userdata.selectedOrganization = "";
@@ -745,6 +764,7 @@ export default {
       orgPublication: [],
       users: [],
     },
+
     showOrganizations() {
       const userId = Meteor.userId();
       // if (userId) {
@@ -752,10 +772,25 @@ export default {
       // }
     },
     showUsers() {
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 1200);
-      return Meteor.users.find({});
+      // setTimeout(() => {
+      //   this.isLoading = false;
+      // }, 1200);
+      // return Meteor.users.find({});
+      const userId = Meteor.userId();
+      const userDetails = Meteor.user();
+      // const organizationId = Meteor.user().profile.organizationId
+      const organizationId = userDetails?.profile?.organizationId;
+      console.log(organizationId);
+      //console.log(Meteor.user().profile.organizationName);
+      if (userId && organizationId) {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 1200);
+        return Meteor.users.find({ organizationId: organizationId }).fetch();
+      } else {
+        // return "Check the USER and CONTACT schema"
+        console.log("Check format");
+      }
     },
   },
 };

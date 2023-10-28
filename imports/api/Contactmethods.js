@@ -8,12 +8,13 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You must be logged in to add contacts.');
     }
     const userDetails = Meteor.user();
+    console.log(userDetails.profile.organizationName);
     Contacts.insert({
       ...contactData,
-      organizationName:userDetails.profile.organization,
-      organizationID:userDetails._id
+      organizationName:userDetails.profile.organizationName,
+      organizationID:userDetails.profile.organizationId,
     });
-  },
+  }, 
 
   'contacts.remove'(contactId) {
     if (!this.userId) {

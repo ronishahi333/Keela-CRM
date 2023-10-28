@@ -669,16 +669,32 @@ export default {
       tagsPublication: [],
     },
     showTags() {
-      const userId = Meteor.userId();
-      //const orgId = Meteor.user().profile.organizationId;
-      if (userId) {
+    //   const userId = Meteor.userId();
+    //   //const orgId = Meteor.user().profile.organizationId;
+    //   if (userId) {
+    //     setTimeout(() => {
+    //       this.isLoading = false;
+    //     }, 1200);
+    //     //return Tags.find({organizationId: orgId}).fetch();
+    //     return Tags.find({}).fetch();
+    //   }
+    // },
+    const userId = Meteor.userId();
+     const userDetails = Meteor.user();
+      // const organizationId = Meteor.user().profile.organizationId
+      const organizationId = userDetails?.profile?.organizationId;
+      console.log(organizationId);
+      //console.log(Meteor.user().profile.organizationName);
+      if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
-        //return Tags.find({organizationId: orgId}).fetch();
-        return Tags.find({}).fetch();
+        return Tags.find({ organizationID: organizationId }).fetch();
+      } else {
+        // return "Check the USER and CONTACT schema"
+        console.log("Check format")
       }
-    },
+    }
   },
 };
 </script>

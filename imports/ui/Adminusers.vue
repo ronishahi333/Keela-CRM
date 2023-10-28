@@ -324,8 +324,8 @@
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       id="permission"
                     >
-                      <option value="admin">Admin</option>
-                      <option value="coordinator">Coordinator</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Coordinator">Coordinator</option>
                     </select>
                   </div>
                   <button
@@ -446,8 +446,8 @@
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                               id="permission"
                             >
-                              <option value="admin">Admin</option>
-                              <option value="coordinator">Coordinator</option>
+                              <option value="Admin">Admin</option>
+                              <option value="Coordinator">Coordinator</option>
                             </select>
                           </div>
                           <button
