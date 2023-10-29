@@ -336,7 +336,7 @@
               <button
                 type="button"
                 class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                @click="TagToggleModal"
+                @click="addcloseModal()"
               >
                 <svg
                   class="w-3 h-3"
@@ -559,7 +559,6 @@ export default {
     const TagAddModal = ref(false);
 
     function TagToggleModal() {
-      console.log(this.tag)
       TagAddModal.value = !TagAddModal.value;
     }
 
@@ -576,6 +575,10 @@ export default {
     },
     closeModal() {
       this.TagEditModal = false;
+      this.tag.tagName = "";
+    },
+    addcloseModal() {
+      this.TagAddModal = false;
       this.tag.tagName = "";
     },
     closeDropdown() {
@@ -669,29 +672,16 @@ export default {
       tagsPublication: [],
     },
     showTags() {
-    //   const userId = Meteor.userId();
-    //   //const orgId = Meteor.user().profile.organizationId;
-    //   if (userId) {
-    //     setTimeout(() => {
-    //       this.isLoading = false;
-    //     }, 1200);
-    //     //return Tags.find({organizationId: orgId}).fetch();
-    //     return Tags.find({}).fetch();
-    //   }
-    // },
     const userId = Meteor.userId();
      const userDetails = Meteor.user();
-      // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
-      //console.log(Meteor.user().profile.organizationName);
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
         return Tags.find({ organizationID: organizationId }).fetch();
       } else {
-        // return "Check the USER and CONTACT schema"
         console.log("Check format")
       }
     }

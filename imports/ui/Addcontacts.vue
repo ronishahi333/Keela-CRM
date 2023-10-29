@@ -308,7 +308,7 @@
 
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
-      <div> <!--v-if="currentUser && currentUser.permission === 'Admin'" -->
+      <div>
         <!-- Modal toggle button -->
         <button
           data-modal-toggle="add-authentication-modal"
@@ -341,7 +341,7 @@
               <button
                 type="button"
                 class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                @click="ContactToggleModal"
+                @click="addcloseModal()"
               >
                 <svg
                   class="w-3 h-3"
@@ -488,6 +488,7 @@
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
                   @click="openEditContactModal(contactdetail)"
+                  v-if="currentUser && currentUser.permission === 'Admin'"
                 >
                   Edit
                 </button>
@@ -670,6 +671,7 @@ export default {
         tagName: "",
       },
       ContactEditModal: false,
+      currentUser:null
     };
   },
 
@@ -686,7 +688,6 @@ export default {
     };
   },
 
- 
 
   methods: {
     openDropdown() {
@@ -695,6 +696,14 @@ export default {
     },
     closeModal() {
       this.ContactEditModal = false;
+      this.contact.fullName = "";
+      this.contact.email = "";
+      this.contact.phoneNumber = "";
+      this.contact.tagName = "";
+    },
+
+    addcloseModal() {
+      this.ContactAddModal = false;
       this.contact.fullName = "";
       this.contact.email = "";
       this.contact.phoneNumber = "";
@@ -802,12 +811,12 @@ export default {
     getUser() {
       const currentUser = Meteor.user();
       if (currentUser) {
-        this.currentUser = {
-          org: currentUser.profile.organizationName,
-          permission: currentUser.profile.permission,
+        this.currentUser = currentUser?.profile? {
+          org: currentUser.profile?.organizationName,
+          permission: currentUser.profile?.permission,
           id: currentUser._id,
-          orgId: currentUser.profile.organizationId
-        };
+          orgId: currentUser.profile?.organizationId,
+        }:null;
       }
     },
   },
@@ -822,20 +831,6 @@ export default {
       tagsPublication: [],
       //users: [],
     },
-    // showContacts() {
-    //   const userId = Meteor.userId();
-    //   //const userDetails = Meteor.user();
-    //   //const organizationName = Meteor.user().profile.organizationName;
-    //   const organizationId = Meteor.user().profile.organizationId
-    //   console.log
-    //   if (userId) {
-    //     setTimeout(() => {
-    //       this.isLoading = false;
-    //     }, 1200);
-    //     //return Contacts.find({}).fetch();
-    //     return Contacts.find({organizationID:organizationId}).fetch();
-    //   }
-    // },
 
     showContacts() {
       const userId = Meteor.userId();
@@ -857,8 +852,17 @@ export default {
 
     showTags() {
       const userId = Meteor.userId();
-      //const orgId = Meteor.user().profile.organizationId;
-      return Tags.find({}).fetch();
+     const userDetails = Meteor.user();
+      // const organizationId = Meteor.user().profile.organizationId
+      const organizationId = userDetails?.profile?.organizationId;
+      console.log(organizationId);
+      //console.log(Meteor.user().profile.organizationName);
+      if (userId && organizationId) {
+        return Tags.find({ organizationID: organizationId }).fetch();
+      } else {
+        // return "Check the USER and CONTACT schema"
+        console.log("Check format")
+      }
     },
   },
 };

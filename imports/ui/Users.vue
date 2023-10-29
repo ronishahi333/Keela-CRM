@@ -300,7 +300,6 @@
     </div>
   </div>
 
-
   <!-- Add Users Button with modal -->
 
   <div class="grid grid-cols-6">
@@ -337,7 +336,7 @@
               <button
                 type="button"
                 class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                @click="UserToggleModal"
+                @click="addcloseModal()"
               >
                 <svg
                   class="w-3 h-3"
@@ -369,7 +368,7 @@
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Organization Name</label
                     >
-                   <select
+                    <select
                       name="orgname"
                       id="orgname"
                       v-model="userdata.selectedOrganization"
@@ -378,7 +377,7 @@
                       selected
                     >
                       <option>
-                        abd
+                        {{ currentUser?.org }}
                       </option>
                     </select>
                   </div>
@@ -403,14 +402,63 @@
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Password</label
                     >
-                    <input
-                      type="password"
-                      name="pass"
-                      id="pass"
-                      v-model="userdata.password"
-                      placeholder="*******"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    />
+                    <div class="relative flex">
+                      <input
+                        :type="passwordVisible ? 'text' : 'password'"
+                        v-model="password"
+                        name="password"
+                        id="password"
+                        placeholder="••••••••"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required=""
+                      />
+                      <button
+                        type="button"
+                        class="absolute inset-y-0 right-0 px-2.5 py-2.5 text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-white"
+                        @click="togglePasswordVisibility()"
+                      >
+                        <svg
+                          v-if="passwordVisible"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-eye"
+                        >
+                          <path
+                            d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+                          />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg
+                          v-else
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-eye-off"
+                        >
+                          <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                          <path
+                            d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                          />
+                          <path
+                            d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                          />
+                          <line x1="2" x2="22" y1="2" y2="22" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label
@@ -568,6 +616,7 @@
                   class="ml-1 px-5 py-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
                   type="button"
                   @click="deleteUser(user._id)"
+                  v-if="currentUser && currentUser.id !== user._id"
                 >
                   Delete
                 </button>
@@ -611,7 +660,8 @@ export default {
         permission: "",
       },
       UserEditModal: false,
-      currentUser:null
+      currentUser: null,
+      passwordVisible: false,
     };
   },
 
@@ -633,20 +683,31 @@ export default {
   },
 
   methods: {
+    togglePasswordVisibility() {
+      this.passwordVisible = !this.passwordVisible;
+    },
+
     getUser() {
       const currentUser = Meteor.user();
       if (currentUser) {
-        this.currentUser = {
-          org: currentUser.profile.organizationName,
-          permission: currentUser.profile.permission,
-          id: currentUser._id,
-          orgId: currentUser.profile.organizationId,
-        };
+        this.currentUser = currentUser?.profile
+          ? {
+              org: currentUser.profile?.organizationName,
+              permission: currentUser.profile?.permission,
+              id: currentUser._id,
+              orgId: currentUser.profile?.organizationId,
+            }
+          : null;
       }
     },
 
     closeModal() {
       this.UserEditModal = false;
+      this.userdata.permission = "";
+    },
+
+    addcloseModal() {
+      this.UserAddModal = false;
       this.userdata.selectedOrganization = "";
       this.userdata.email = "";
       this.userdata.password = "";
@@ -712,10 +773,6 @@ export default {
     updateUser() {
       const updatedUserData = {
         userId: this.userdata._id,
-        //_id: this.userdata._id,
-        // selectedOrganization: this.userdata.selectedOrganization,
-        // email: this.userdata.email,
-        // password: this.userdata.password,
         permission: this.userdata.permission,
       };
 
@@ -733,7 +790,7 @@ export default {
             setTimeout(() => {
               toast.style.display = "none";
             }, 1500);
-            this.UserEditModal = false; // Closes the Edit Usesr Modal
+            this.UserEditModal = false; // Closes the Edit Users Modal
           }
         }
       );
@@ -765,28 +822,20 @@ export default {
       users: [],
     },
 
-    showOrganizations() {
-      const userId = Meteor.userId();
-      // if (userId) {
-      return Organizations.find({}).fetch();
-      // }
-    },
+    showOrganizations() {},
     showUsers() {
-      // setTimeout(() => {
-      //   this.isLoading = false;
-      // }, 1200);
-      // return Meteor.users.find({});
       const userId = Meteor.userId();
       const userDetails = Meteor.user();
       // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
-      //console.log(Meteor.user().profile.organizationName);
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
-        return Meteor.users.find({ organizationId: organizationId }).fetch();
+        return Meteor.users
+          .find({ "profile.organizationId": organizationId })
+          .fetch();
       } else {
         // return "Check the USER and CONTACT schema"
         console.log("Check format");

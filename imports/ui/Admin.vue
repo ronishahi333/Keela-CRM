@@ -248,7 +248,7 @@
               <button
                 type="button"
                 class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                @click="toggleModal"
+                @click="addorgcloseModal()"
               >
                 <svg
                   class="w-3 h-3"
@@ -427,7 +427,10 @@
                         >
                           Edit Organization
                         </h3>
-                        <form class="space-y-6" @submit.prevent="updateOrganization">
+                        <form
+                          class="space-y-6"
+                          @submit.prevent="updateOrganization"
+                        >
                           <div>
                             <label
                               for="eorgname"
@@ -496,7 +499,6 @@
                 >
                   Delete
                 </button>
-
               </td>
             </tr>
           </tbody>
@@ -536,9 +538,15 @@ export default {
   },
   // Inside your Vue component
   methods: {
-
     closeModal() {
       this.OrganizationEditModal = false;
+      this.organization.organizationName = "";
+      this.organization.organizationaddress = "";
+      this.organization.organizationnumber = "";
+    },
+
+    addorgcloseModal() {
+      this.isModalOpen = false;
       this.organization.organizationName = "";
       this.organization.organizationaddress = "";
       this.organization.organizationnumber = "";
