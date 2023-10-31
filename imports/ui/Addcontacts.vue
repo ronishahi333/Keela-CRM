@@ -241,7 +241,7 @@
     </div>
   </div>
 
-<!-- Edit Contact Toast Message -->
+  <!-- Edit Contact Toast Message -->
   <div
     id="toast-edit"
     class="absolute top-0 right-0 mt-4 mr-4 z-50 flex items-center w-80 p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
@@ -268,7 +268,6 @@
       <div class="ml-2 text-sm font-normal">Contact updated successfully</div>
     </div>
   </div>
-
 
   <!-- Delete Contact Toast Message -->
   <div class="grid grid-cols-6">
@@ -315,7 +314,6 @@
           class="px-5 py-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
           type="button"
           @click="ContactToggleModal"
-          
         >
           Add Contact
         </button>
@@ -378,7 +376,7 @@
                       name="flname"
                       id="flname"
                       v-model="contact.fullName"
-                      placeholder = "Marry Queen"
+                      placeholder="Marry Queen"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     />
@@ -394,7 +392,7 @@
                       name="email"
                       id="email"
                       v-model="contact.email"
-                      placeholder = "queen783@gmail.com"
+                      placeholder="queen783@gmail.com"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -409,7 +407,7 @@
                       name="phonenumber"
                       id="phonenumber"
                       v-model="contact.phoneNumber"
-                      placeholder = "44653135465"
+                      placeholder="44653135465"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     />
                   </div>
@@ -487,11 +485,10 @@
                   data-modal-toggle="edit-authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
-                  @click="openEditContactModal(contactdetail)"
-                  v-if="currentUser && currentUser.permission === 'Admin'"
+                  @click="openEditContactModal(contactdetail)"                  
                 >
                   Edit
-                </button>
+                </button><!--v-if="currentUser && currentUser.permission === 'Admin'"-->
 
                 <!-- Overlay -->
                 <div
@@ -671,7 +668,7 @@ export default {
         tagName: "",
       },
       ContactEditModal: false,
-      currentUser:null
+      currentUser: null,
     };
   },
 
@@ -687,7 +684,6 @@ export default {
       ContactToggleModal,
     };
   },
-
 
   methods: {
     openDropdown() {
@@ -811,19 +807,21 @@ export default {
     getUser() {
       const currentUser = Meteor.user();
       if (currentUser) {
-        this.currentUser = currentUser?.profile? {
-          org: currentUser.profile?.organizationName,
-          permission: currentUser.profile?.permission,
-          id: currentUser._id,
-          orgId: currentUser.profile?.organizationId,
-        }:null;
+        this.currentUser = currentUser?.profile
+          ? {
+              org: currentUser.profile?.organizationName,
+              permission: currentUser.profile?.permission,
+              id: currentUser._id,
+              orgId: currentUser.profile?.organizationId,
+            }
+          : null;
       }
     },
   },
 
   created() {
-        this.getUser();
-    },
+    this.getUser();
+  },
 
   meteor: {
     $subscribe: {
@@ -834,7 +832,7 @@ export default {
 
     showContacts() {
       const userId = Meteor.userId();
-     const userDetails = Meteor.user();
+      const userDetails = Meteor.user();
       // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
@@ -843,16 +841,19 @@ export default {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
-        return Contacts.find({ organizationID: organizationId }).fetch();
+        return Contacts.find(
+          { organizationID: organizationId },
+          { sort: { createdAt: -1 } }
+        ).fetch();
       } else {
         // return "Check the USER and CONTACT schema"
-        console.log("Check format")
+        console.log("Check format");
       }
     },
 
     showTags() {
       const userId = Meteor.userId();
-     const userDetails = Meteor.user();
+      const userDetails = Meteor.user();
       // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
@@ -861,7 +862,7 @@ export default {
         return Tags.find({ organizationID: organizationId }).fetch();
       } else {
         // return "Check the USER and CONTACT schema"
-        console.log("Check format")
+        console.log("Check format");
       }
     },
   },

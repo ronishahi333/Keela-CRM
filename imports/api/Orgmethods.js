@@ -3,7 +3,10 @@ import { Organizations } from "./Orgcollections";
 
 Meteor.methods({
   insertOrg(organizations) {
-    Organizations.insert(organizations);
+    Organizations.insert({
+      ...organizations,
+      createdAt: new Date(),
+    });
   },
 
   deleteOrg(orgId) {
@@ -20,8 +23,9 @@ Meteor.methods({
     Organizations.update(org._id, {
       $set: {
         ...org,
+        updatedAt: new Date(),
       },
     });
-    return 'Organization updated successfully';
+    return "Organization updated successfully";
   },
 });

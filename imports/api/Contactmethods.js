@@ -8,11 +8,11 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You must be logged in to add contacts.');
     }
     const userDetails = Meteor.user();
-    console.log(userDetails.profile.organizationName);
     Contacts.insert({
       ...contactData,
       organizationName:userDetails.profile.organizationName,
       organizationID:userDetails.profile.organizationId,
+      createdAt: new Date(),
     });
   }, 
 
@@ -33,6 +33,7 @@ Meteor.methods({
     Contacts.update(contact._id, {
       $set: {
         ...contact,
+        updatedAt: new Date(),
       },
     });
     return 'Contact updated successfully';

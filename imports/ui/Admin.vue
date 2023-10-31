@@ -308,14 +308,14 @@
                   </div>
                   <div>
                     <label
-                      for="orgnumber"
+                      for="phonenumber"
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Organization Number</label
                     >
                     <input
                       type="number"
-                      name="orgnumber"
-                      id="orgnumber"
+                      name="phonenumber"
+                      id="phonenumber"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       v-model="organization.organizationnumber"
                       placeholder="984986416516"
@@ -634,7 +634,7 @@ export default {
     showOrganizations() {
       // const userId = Meteor.userId();
       // if (userId) {
-      return Organizations.find({}).fetch();
+      return Organizations.find({}, { sort: { createdAt: -1 } }).fetch();
       // }
       //return Organizations.find({}).fetch();
     },

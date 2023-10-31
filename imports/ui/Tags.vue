@@ -373,7 +373,7 @@
                       name="name"
                       id="name"
                       v-model="tag.tagName"
-                      placeholder = "Blackie"
+                      placeholder="Blackie"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                       required
                     />
@@ -423,7 +423,7 @@
                 {{ tagname.tagName }}
               </th>
               <td class="px-6 py-4"></td>
-              <td class="px-6 py-4"></td> 
+              <td class="px-6 py-4"></td>
               <td class="px-6 py-4">
                 <button
                   data-modal-toggle="authentication-modal"
@@ -542,7 +542,7 @@
     </div>
   </div>
 </template>
-<script>
+  <script>
 import { ref } from "vue";
 import { Tags } from "../api/Tagcollection";
 export default {
@@ -598,7 +598,7 @@ export default {
     },
 
     savetags() {
-      console.log(this.tag)
+      console.log(this.tag);
       Meteor.call("tags.insert", this.tag, (error, result) => {
         if (error) {
           console.error("Error saving tag:", error.reason);
@@ -638,7 +638,7 @@ export default {
     openEditTagModal(tags) {
       console.log("Edit Button Clicked", tags);
       this.TagEditModal = true;
-      this.tag = {...tags};
+      this.tag = { ...tags };
     },
 
     updateTag() {
@@ -660,7 +660,7 @@ export default {
           }, 1500);
           // Clear the form fields after updating
           this.tag._id = "";
-          this.tag.tagName="";
+          this.tag.tagName = "";
           this.TagEditModal = false; // Closes the Edit Tag Modal
         }
       });
@@ -672,19 +672,23 @@ export default {
       tagsPublication: [],
     },
     showTags() {
-    const userId = Meteor.userId();
-     const userDetails = Meteor.user();
+      const userId = Meteor.userId();
+      const userDetails = Meteor.user();
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
         }, 1200);
-        return Tags.find({ organizationID: organizationId }).fetch();
+        return Tags.find(
+          { organizationID: organizationId },
+          { sort: { createdAt: -1 } }
+        ).fetch();
       } else {
-        console.log("Check format")
+        console.log("Check format");
       }
-    }
+    },
   },
 };
 </script>
+  

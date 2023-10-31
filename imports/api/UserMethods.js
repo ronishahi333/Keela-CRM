@@ -20,7 +20,7 @@ Meteor.methods({
       { _id: data.userId },
       {
         $set: {
-          'profile.permission': data.updates['profile.permission'],
+           'profile.permission': data.updates['profile.permission'],
         },
       })
   }

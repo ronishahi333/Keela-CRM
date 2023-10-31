@@ -9,6 +9,7 @@ Meteor.methods({
       ...tagData,
       organizationName: userDetails.profile.organizationName,
       organizationID: userDetails.profile.organizationId,
+      createdAt: new Date(),
     });
   },
 
@@ -28,6 +29,7 @@ Meteor.methods({
         ...tag,
         organizationName: userDetails.profile.organizationName,
         organizationID: userDetails.profile.organizationId,
+        updatedAt: new Date(),
       },
     });
     return "Tag updated successfully";

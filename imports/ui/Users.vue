@@ -376,8 +376,8 @@
                       required
                       selected
                     >
-                      <option>
-                        {{ currentUser?.org }}
+                      <option v-if="currentUser && currentUser.org">
+                        {{ currentUser.org }}
                       </option>
                     </select>
                   </div>
@@ -646,15 +646,17 @@
 </template>
 <script>
 import { ref } from "vue";
+// import {computed} from "vue"
 import { Organizations } from "../api/Orgcollections";
 
 export default {
+  name: "users",
   data() {
     const user = Meteor.user();
     return {
       isLoading: true,
       userdata: {
-        selectedOrganization: user ? user.profile.organizationName : "",
+        selectedOrganization: "",
         email: "",
         password: "",
         permission: "",
@@ -676,6 +678,32 @@ export default {
       UserAddModal,
       UserToggleModal,
     };
+
+    // const userdata = computed(() => ({
+    //   selectedOrganization: null,
+    // }));
+
+    // const currentUser = computed(() => {
+    //   const currentUser = Meteor.user();
+    //   if (currentUser) {
+    //     return currentUser?.profile
+    //       ? {
+    //           org: currentUser.profile?.organizationName,
+    //           permission: currentUser.profile?.permission,
+    //           id: currentUser._id,
+    //           orgId: currentUser.profile?.organizationId,
+    //         }
+    //       : null;
+    //   }
+    //   return null;
+    // });
+
+    // return {
+    //   userdata,
+    //   currentUser,
+    //   UserAddModal,
+    //   UserToggleModal,
+    // };
   },
 
   created() {

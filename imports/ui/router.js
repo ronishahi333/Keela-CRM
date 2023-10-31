@@ -7,7 +7,6 @@ import Dashboard from "./Dashboard.vue";
 import Admin from "./Admin.vue";
 import Adminusers from "./Adminusers.vue";
 import Userlogin from "./Userslogin.vue";
-import Test from "./Test.vue";
 import Userregister from "./Usersregister.vue";
 import Pagenotfound from "./Pagenotfound.vue"
 
@@ -68,11 +67,7 @@ export const router = createRouter({
       name: "pagenotfound",
       component: Pagenotfound,
     },
-    {
-      path: "/test",
-      name: "test",
-      component: Test,
-    },
+
   ],
 });
 

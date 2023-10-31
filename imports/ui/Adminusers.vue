@@ -481,7 +481,7 @@
                         >
                           Edit User
                         </h3>
-                        <form class="space-y-6" @submit.prevent="updateUser">
+                        <form class="space-y-6" @submit.prevent="updateUsers">
                           <div>
                             <label
                               for="permission"
@@ -649,19 +649,19 @@ export default {
       this.userdata.permission = users.profile.permission;
     },
 
-    updateUser() {
+    updateUsers() {
       const updatedUserData = {
-        userId: this.userdata._id,
+        // userId: this.userdata._id,
         //_id: this.userdata._id,
         // selectedOrganization: this.userdata.selectedOrganization,
         // email: this.userdata.email,
         // password: this.userdata.password,
-        permission: this.userdata.permission,
+        'profile.permission': this.userdata.permission,
       };
 
       Meteor.call(
         "updateUser",
-        { updates: updatedUserData },
+        { userId: this.userdata._id, updates: updatedUserData },
         (error, result) => {
           if (error) {
             console.error("Error updating user:", error.reason);
@@ -694,7 +694,7 @@ export default {
     },
 
     showUsers() {
-      return Meteor.users.find({});
+      return Meteor.users.find({},{ sort: { createdAt: -1 } });
     },
   },
 };
