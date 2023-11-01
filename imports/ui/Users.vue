@@ -1,4 +1,6 @@
 <template>
+  <div class="loading" v-if="!$subReady.users">Loading...</div>
+  {{ getUser() }}
   <!-- Sidebar -->
   <div class="grid grid-cols-6 mb-6 mt-6">
     <div class="col-span-1">
@@ -169,7 +171,7 @@
         class="font-medium rounded-lg text-sm pl-8 text-center inline-flex items-center"
         type="button"
       >
-        Organization Name
+        {{ currentUser?.org }}
         <svg
           class="w-2.5 h-2.5 ml-2.5 mt-0.5"
           aria-hidden="true"
@@ -610,6 +612,7 @@
                     </div>
                   </div>
                 </div>
+                <!---->
 
                 <button
                   data-modal-toggle="authentication-modal"
@@ -646,13 +649,11 @@
 </template>
 <script>
 import { ref } from "vue";
-// import {computed} from "vue"
 import { Organizations } from "../api/Orgcollections";
 
 export default {
   name: "users",
   data() {
-    const user = Meteor.user();
     return {
       isLoading: true,
       userdata: {
@@ -662,7 +663,6 @@ export default {
         permission: "",
       },
       UserEditModal: false,
-      currentUser: null,
       passwordVisible: false,
     };
   },
@@ -728,6 +728,20 @@ export default {
           : null;
       }
     },
+
+    // checkPermission() {
+    //   const currentUser = Meteor.user();
+    //   if (!Meteor.user()) {
+    //     return [];
+    //   } else {
+    //     const userId = currentUser._id;
+    //     if (userId !== currentUser) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   }
+    // },
 
     closeModal() {
       this.UserEditModal = false;
@@ -844,6 +858,7 @@ export default {
       });
     },
   },
+
   meteor: {
     $subscribe: {
       orgPublication: [],
@@ -860,7 +875,7 @@ export default {
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
-        }, 1200);
+        }, 500);
         return Meteor.users
           .find({ "profile.organizationId": organizationId })
           .fetch();

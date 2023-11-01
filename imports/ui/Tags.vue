@@ -1,4 +1,6 @@
 <template>
+  <div class="loading" v-if="!$subReady.tagsPublication">Loading...</div>
+  {{ getUser() }}
   <!-- Sidebar -->
   <div class="grid grid-cols-6 mb-6 mt-6">
     <div class="col-span-1">
@@ -170,7 +172,7 @@
         class="font-medium rounded-lg text-sm pl-8 text-center inline-flex items-center"
         type="button"
       >
-        Organization Name
+        {{ currentUser.org }}
         <svg
           class="w-2.5 h-2.5 ml-2.5 mt-0.5"
           aria-hidden="true"
@@ -568,7 +570,22 @@ export default {
     };
   },
 
+  created() {
+    this.getUser();
+  },
+
   methods: {
+    getUser() {
+      const currentUser = Meteor.user();
+      if (currentUser) {
+        this.currentUser = currentUser?.profile
+          ? {
+              org: currentUser.profile?.organizationName,
+            }
+          : null;
+      }
+    },
+
     openDropdown() {
       // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
@@ -679,7 +696,7 @@ export default {
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
-        }, 1200);
+        }, 500);
         return Tags.find(
           { organizationID: organizationId },
           { sort: { createdAt: -1 } }

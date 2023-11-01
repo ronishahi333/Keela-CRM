@@ -1,4 +1,6 @@
 <template>
+  <div class="loading" v-if="!$subReady.contactsPublication">Loading...</div>
+  {{ getUser() }}
   <!-- Sidebar -->
   <div class="grid grid-cols-6 mb-6 mt-6">
     <div class="col-span-1">
@@ -170,7 +172,7 @@
         class="font-medium rounded-lg text-sm pl-8 text-center inline-flex items-center"
         type="button"
       >
-        Organization Name
+        {{ currentUser.org }}
         <svg
           class="w-2.5 h-2.5 ml-2.5 mt-0.5"
           aria-hidden="true"
@@ -313,6 +315,7 @@
           data-modal-toggle="add-authentication-modal"
           class="px-5 py-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
           type="button"
+          v-if="checkPermission()"
           @click="ContactToggleModal"
         >
           Add Contact
@@ -462,7 +465,9 @@
               <th scope="col" class="px-6 py-3">Primary Email</th>
               <th scope="col" class="px-6 py-3">Phone Number</th>
               <th scope="col" class="px-6 py-3">Tags</th>
-              <th scope="col" class="px-6 py-3">Actions</th>
+              <th scope="col" class="px-6 py-3" v-if="checkPermission()">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -485,10 +490,11 @@
                   data-modal-toggle="edit-authentication-modal"
                   class="px-5 py-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                   type="button"
-                  @click="openEditContactModal(contactdetail)"                  
+                  @click="openEditContactModal(contactdetail)"
+                  v-if="checkPermission()"
                 >
-                  Edit
-                </button><!--v-if="currentUser && currentUser.permission === 'Admin'"-->
+                  Edit</button
+                ><!--v-if="currentUser && currentUser.permission === 'Admin'"-->
 
                 <!-- Overlay -->
                 <div
@@ -620,6 +626,7 @@
                   class="ml-1 px-5 py-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
                   type="button"
                   @click="deleteContact(contactdetail._id)"
+                  v-if="checkPermission()"
                 >
                   Delete
                 </button>
@@ -667,6 +674,7 @@ export default {
         phoneNumber: "",
         tagName: "",
       },
+      disableAddButton: false,
       ContactEditModal: false,
       currentUser: null,
     };
@@ -804,6 +812,20 @@ export default {
       });
     },
 
+    checkPermission() {
+      const currentUser = Meteor.user();
+      if (!Meteor.user()) {
+        return [];
+      } else {
+        const userRole = currentUser.profile.permission;
+        if (userRole === "Coordinator") {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+
     getUser() {
       const currentUser = Meteor.user();
       if (currentUser) {
@@ -818,6 +840,22 @@ export default {
       }
     },
   },
+
+  // computed:{
+  //       checkPermission(){
+  //         const currentUser = Meteor.user()
+  //           if(!Meteor.user()){
+  //               return []
+  //           }else{
+  //               const userRole = currentUser.profile.permission;
+  //               if(userRole === 'Coordinator'){
+  //                   return false;
+  //               }else{
+  //                   return true;
+  //               }
+  //           }
+  //       },
+  //   },
 
   created() {
     this.getUser();
@@ -840,7 +878,7 @@ export default {
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
-        }, 1200);
+        }, 500);
         return Contacts.find(
           { organizationID: organizationId },
           { sort: { createdAt: -1 } }

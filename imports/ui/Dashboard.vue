@@ -1,4 +1,6 @@
 <template>
+  <div class="loading" v-if="!$subReady.users">Loading...</div>
+  {{ getUser() }}
   <!-- Sidebar -->
   <div class="grid grid-cols-6 mb-8 mt-6">
     <div class="col-span-1">
@@ -170,7 +172,7 @@
         class="font-medium rounded-lg text-sm pl-8 text-center inline-flex items-center"
         type="button"
       >
-        {{ user.org }}
+        {{ currentUser.org }}
         <svg
           class="w-2.5 h-2.5 ml-2.5 mt-0.5"
           aria-hidden="true"
@@ -218,9 +220,9 @@
     <h1
       class="col-start-2 col-span-4 text-4xl font-medium text-gray-700 dark:text-gray-400 dark:hover:text-white"
     >
-      Welcome, Ronnie Shahi
+      Welcome, {{ formatEmail(currentUser.email) }}
     </h1>
-  </div>
+  </div>  
   <div class="grid grid-cols-6">
     <h2
       class="col-start-2 col-span-4 text-2xl font-small text-gray-700 dark:text-gray-400 dark:hover:text-white"
@@ -291,6 +293,17 @@ export default {
   },
 
   methods: {
+    formatEmail(email) {
+      const emailWithoutDigits = email.replace(/\d/g, '');
+
+      // Split the email without digits by "@" and get the part before the "@"
+      const parts = emailWithoutDigits.split('@');
+      const firstPart = parts.length > 0 ? parts[0] : '';
+
+      // Capitalize the first letter
+      return firstPart.charAt(0).toUpperCase() + firstPart.slice(1); // Get the part before the "@" symbol
+    },
+
     openDropdown() {
       // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
@@ -301,11 +314,15 @@ export default {
     },
 
     getUser() {
-      const user = Meteor.user();
-      if (user) {
-        this.user = {
-          org: user.profile.organizationName,
-        };
+      const currentUser = Meteor.user();
+      if (currentUser) {
+        this.currentUser = currentUser?.profile
+          ? {
+              org: currentUser.profile?.organizationName,
+              orgId: currentUser.profile?.organizationId,
+              email: currentUser.emails[0].address,
+            }
+          : null;
       }
     },
 
@@ -318,6 +335,12 @@ export default {
           this.$router.push({ name: "login" });
         }
       });
+    },
+  },
+
+  meteor: {
+    $subscribe: {
+      users: [],
     },
   },
 };
