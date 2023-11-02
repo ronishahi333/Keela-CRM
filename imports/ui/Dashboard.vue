@@ -305,11 +305,9 @@ export default {
     },
 
     openDropdown() {
-      // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
     },
     closeDropdown() {
-      // Use $refs to access the dropdown element and hide it
       this.$refs.dropdown.classList.add("hidden");
     },
 

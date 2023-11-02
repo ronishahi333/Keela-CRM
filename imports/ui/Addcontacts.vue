@@ -493,8 +493,8 @@
                   @click="openEditContactModal(contactdetail)"
                   v-if="checkPermission()"
                 >
-                  Edit</button
-                ><!--v-if="currentUser && currentUser.permission === 'Admin'"-->
+                  Edit
+                </button>
 
                 <!-- Overlay -->
                 <div
@@ -695,9 +695,13 @@ export default {
 
   methods: {
     openDropdown() {
-      // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
     },
+
+    closeDropdown() {
+      this.$refs.dropdown.classList.add("hidden");
+    },
+
     closeModal() {
       this.ContactEditModal = false;
       this.contact.fullName = "";
@@ -712,10 +716,6 @@ export default {
       this.contact.email = "";
       this.contact.phoneNumber = "";
       this.contact.tagName = "";
-    },
-    closeDropdown() {
-      // Use $refs to access the dropdown element and hide it
-      this.$refs.dropdown.classList.add("hidden");
     },
 
     logout() {
@@ -759,7 +759,6 @@ export default {
     },
 
     deleteContact(contactId) {
-      // Call the 'contacts.remove' method on the server
       Meteor.call("contacts.remove", contactId, (error) => {
         if (error) {
           console.error("Error deleting contact:", error.reason);
@@ -841,22 +840,6 @@ export default {
     },
   },
 
-  // computed:{
-  //       checkPermission(){
-  //         const currentUser = Meteor.user()
-  //           if(!Meteor.user()){
-  //               return []
-  //           }else{
-  //               const userRole = currentUser.profile.permission;
-  //               if(userRole === 'Coordinator'){
-  //                   return false;
-  //               }else{
-  //                   return true;
-  //               }
-  //           }
-  //       },
-  //   },
-
   created() {
     this.getUser();
   },
@@ -865,16 +848,13 @@ export default {
     $subscribe: {
       contactsPublication: [],
       tagsPublication: [],
-      //users: [],
     },
 
     showContacts() {
       const userId = Meteor.userId();
       const userDetails = Meteor.user();
-      // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
-      //console.log(Meteor.user().profile.organizationName);
       if (userId && organizationId) {
         setTimeout(() => {
           this.isLoading = false;
@@ -884,7 +864,6 @@ export default {
           { sort: { createdAt: -1 } }
         ).fetch();
       } else {
-        // return "Check the USER and CONTACT schema"
         console.log("Check format");
       }
     },
@@ -892,14 +871,10 @@ export default {
     showTags() {
       const userId = Meteor.userId();
       const userDetails = Meteor.user();
-      // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
-      console.log(organizationId);
-      //console.log(Meteor.user().profile.organizationName);
       if (userId && organizationId) {
         return Tags.find({ organizationID: organizationId }).fetch();
       } else {
-        // return "Check the USER and CONTACT schema"
         console.log("Check format");
       }
     },

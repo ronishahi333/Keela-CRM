@@ -220,7 +220,6 @@ export default {
       };
 
       try {
-        // Call the 'user.register' method defined on the server
         const userId = await new Promise((resolve, reject) => {
           Meteor.call("user.register", userData, (error, result) => {
             if (error) {
@@ -248,7 +247,6 @@ export default {
         this.permission = "";
       } catch (error) {
         console.error(error);
-        // Handle errors
       }
     },
   },

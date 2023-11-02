@@ -403,8 +403,9 @@
           >
             <tr>
               <th scope="col" class="px-6 py-3">Organization Name</th>
-              <th scope="col" class="px-6 py-3">User Email</th>
+              <th scope="col" class="px-6 py-3">Primary Email</th>
               <th scope="col" class="px-6 py-3">Permission</th>
+              <th scope="col" class="px-6 py-3">Type</th>
               <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
           </thead>
@@ -422,6 +423,7 @@
               </th>
               <td class="px-6 py-4">{{ user.emails[0].address }}</td>
               <td class="px-6 py-4">{{ user.profile.permission }}</td>
+              <td class="px-6 py-4">User</td>
               <td class="px-6 py-4">
                 <button
                   data-modal-toggle="authentication-modal"
@@ -509,8 +511,6 @@
                     </div>
                   </div>
                 </div>
-
-                <!--v-if="currentUser.id !== user._id"-->
                 <button
                   data-modal-toggle="authentication-modal"
                   class="ml-1 px-5 py-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
@@ -610,7 +610,7 @@ export default {
           const toast = document.getElementById("toast-success");
           toast.style.display = "block";
 
-          // Hide the toast after 2 seconds
+          // Hide the toast after 1.5 seconds
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
@@ -625,7 +625,6 @@ export default {
     },
 
     deleteUser(userId) {
-      // Call the 'contacts.remove' method on the server
       Meteor.call("deleteUser", userId, (error) => {
         if (error) {
           console.error("Error deleting user:", error.reason);
@@ -686,10 +685,7 @@ export default {
     },
     showOrganizations() {
       const userId = Meteor.userId();
-      // if (userId) {
       return Organizations.find({}).fetch();
-      // }
-      //return Organizations.find({}).fetch();
     },
 
     showUsers() {

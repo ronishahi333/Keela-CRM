@@ -19,11 +19,6 @@ export const router = createRouter({
       component: Userlogin,
     },
     {
-      path: "/about",
-      name: "about",
-      component: () => import("./About.vue"),
-    },
-    {
       path: "/dashboard/",
       name: "dashboard",
       component: Dashboard,

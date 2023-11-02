@@ -587,7 +587,6 @@ export default {
     },
 
     openDropdown() {
-      // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
     },
     closeModal() {
@@ -599,7 +598,6 @@ export default {
       this.tag.tagName = "";
     },
     closeDropdown() {
-      // Use $refs to access the dropdown element and hide it
       this.$refs.dropdown.classList.add("hidden");
     },
 

@@ -1,4 +1,3 @@
-// methods.js
 import { Meteor } from "meteor/meteor";
 import { Tags } from "./Tagcollection";
 

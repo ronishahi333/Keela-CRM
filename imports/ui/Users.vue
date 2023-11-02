@@ -303,7 +303,6 @@
   </div>
 
   <!-- Add Users Button with modal -->
-
   <div class="grid grid-cols-6">
     <div class="col-start-6 justify-self-end">
       <div>
@@ -385,7 +384,7 @@
                         {{ currentUser.org }}
                       </option>
                     </select>
-                  </div>      
+                  </div>
                   <div>
                     <label
                       for="email"
@@ -509,8 +508,9 @@
           >
             <tr>
               <th scope="col" class="px-6 py-3">Organization Name</th>
-              <th scope="col" class="pl-12 py-3">Primary Email</th>
-              <th scope="col" class="px-6 py-3">Permisson</th>
+              <th scope="col" class="px-6 py-3">Primary Email</th>
+              <th scope="col" class="px-6 py-3">Permission</th>
+              <th scope="col" class="px-6 py-3">Type</th>
               <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
           </thead>
@@ -528,6 +528,7 @@
               </th>
               <td class="px-6 py-4">{{ user.emails[0].address }}</td>
               <td class="px-6 py-4">{{ user.profile.permission }}</td>
+              <td class="px-6 py-4">User</td>
               <td class="px-6 py-4">
                 <button
                   data-modal-toggle="authentication-modal"
@@ -615,8 +616,6 @@
                     </div>
                   </div>
                 </div>
-                <!---->
-
                 <button
                   data-modal-toggle="authentication-modal"
                   class="ml-1 px-5 py-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
@@ -681,32 +680,6 @@ export default {
       UserAddModal,
       UserToggleModal,
     };
-
-    // const userdata = computed(() => ({
-    //   selectedOrganization: null,
-    // }));
-
-    // const currentUser = computed(() => {
-    //   const currentUser = Meteor.user();
-    //   if (currentUser) {
-    //     return currentUser?.profile
-    //       ? {
-    //           org: currentUser.profile?.organizationName,
-    //           permission: currentUser.profile?.permission,
-    //           id: currentUser._id,
-    //           orgId: currentUser.profile?.organizationId,
-    //         }
-    //       : null;
-    //   }
-    //   return null;
-    // });
-
-    // return {
-    //   userdata,
-    //   currentUser,
-    //   UserAddModal,
-    //   UserToggleModal,
-    // };
   },
 
   created() {
@@ -732,20 +705,6 @@ export default {
       }
     },
 
-    // checkPermission() {
-    //   const currentUser = Meteor.user();
-    //   if (!Meteor.user()) {
-    //     return [];
-    //   } else {
-    //     const userId = currentUser._id;
-    //     if (userId !== currentUser) {
-    //       return false;
-    //     } else {
-    //       return true;
-    //     }
-    //   }
-    // },
-
     closeModal() {
       this.UserEditModal = false;
       this.userdata.permission = "";
@@ -764,8 +723,8 @@ export default {
         email: this.userdata.email,
         password: this.userdata.password,
         profile: {
-          organizationName: this.userdata.selectedOrganization.organizationName,
-          organizationId: this.userdata.selectedOrganization._id,
+          organizationName: Meteor.user().profile.organizationName,
+          organizationId: Meteor.user().profile.organizationId,
           permission: this.userdata.permission,
         },
       };
@@ -792,7 +751,6 @@ export default {
     },
 
     deleteUser(userId) {
-      // Call the 'contacts.remove' method on the server
       Meteor.call("deleteUser", userId, (error) => {
         if (error) {
           console.error("Error deleting user:", error.reason);
@@ -801,7 +759,7 @@ export default {
           const toast = document.getElementById("toast-delete");
           toast.style.display = "block";
 
-          // Hides the toast after 2 seconds
+          // Hides the toast after 1.5 seconds
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
@@ -831,7 +789,7 @@ export default {
             console.log("User updated successfully.");
             const toast = document.getElementById("toast-edit");
             toast.style.display = "block";
-            // Hides the toast after 2 seconds
+            // Hides the toast after 1.5 seconds
             setTimeout(() => {
               toast.style.display = "none";
             }, 1500);
@@ -842,11 +800,9 @@ export default {
     },
 
     openDropdown() {
-      // Use $refs to access the dropdown element and show it
       this.$refs.dropdown.classList.remove("hidden");
     },
     closeDropdown() {
-      // Use $refs to access the dropdown element and hide it
       this.$refs.dropdown.classList.add("hidden");
     },
 
@@ -870,7 +826,6 @@ export default {
     showUsers() {
       const userId = Meteor.userId();
       const userDetails = Meteor.user();
-      // const organizationId = Meteor.user().profile.organizationId
       const organizationId = userDetails?.profile?.organizationId;
       console.log(organizationId);
       if (userId && organizationId) {
@@ -881,22 +836,14 @@ export default {
           .find({ "profile.organizationId": organizationId })
           .fetch();
       } else {
-        // return "Check the USER and CONTACT schema"
         console.log("Check format");
       }
     },
 
     showOrganizations() {
       const userId = Meteor.userId();
-      // if (userId) {
       return Organizations.find({}).fetch();
-      // }
-      //return Organizations.find({}).fetch();
     },
-
-    // showUsers() {
-    //   return Meteor.users.find({}, { sort: { createdAt: -1 } });
-    // },
   },
 };
 </script>

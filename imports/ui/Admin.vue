@@ -368,7 +368,6 @@
               </th>
               <td class="px-6 py-4">{{ org.organizationaddress }}</td>
               <td class="px-6 py-4">{{ org.organizationnumber }}</td>
-              <!-- <td class="px-6 py-4"></td> -->
               <td class="px-6 py-4">
                 <button
                   data-modal-toggle="authentication-modal"
@@ -536,7 +535,7 @@ export default {
       toggleModal,
     };
   },
-  // Inside your Vue component
+
   methods: {
     closeModal() {
       this.OrganizationEditModal = false;
@@ -561,7 +560,7 @@ export default {
           const toast = document.getElementById("toast-success");
           toast.style.display = "block";
 
-          // Hide the toast after 2 seconds
+          // Hide the toast after 1.5 seconds
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
@@ -574,7 +573,6 @@ export default {
       });
     },
     deleteOrg(orgId) {
-      // Call the 'contacts.remove' method on the server
       Meteor.call("deleteOrg", orgId, (error) => {
         if (error) {
           console.error("Error deleting Organization:", error.reason);
@@ -583,7 +581,7 @@ export default {
           const toast = document.getElementById("toast-delete");
           toast.style.display = "block";
 
-          // Hides the toast after 2 seconds
+          // Hides the toast after 1.5 seconds
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
@@ -612,7 +610,7 @@ export default {
           console.log("Organization updated successfully.");
           const toast = document.getElementById("toast-edit");
           toast.style.display = "block";
-          // Hides the toast after 2 seconds
+          // Hides the toast after 1.5 seconds
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
@@ -632,11 +630,7 @@ export default {
       users: [],
     },
     showOrganizations() {
-      // const userId = Meteor.userId();
-      // if (userId) {
       return Organizations.find({}, { sort: { createdAt: -1 } }).fetch();
-      // }
-      //return Organizations.find({}).fetch();
     },
   },
 };

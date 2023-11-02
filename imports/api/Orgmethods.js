@@ -19,7 +19,6 @@ Meteor.methods({
   },
 
   editOrg(org) {
-    //const userDetails = Meteor.user();
     Organizations.update(org._id, {
       $set: {
         ...org,

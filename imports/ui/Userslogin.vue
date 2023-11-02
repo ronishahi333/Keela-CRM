@@ -198,11 +198,10 @@ export default {
           const toast = document.getElementById("toast-invalid");
           toast.style.display = "block";
 
-          // Hide the toast after 2 seconds
+          // Hide the toast after 1.5 seconds
           setTimeout(() => {
             toast.style.display = "none";
           }, 1500);
-          //console.log(error.reason);
         } else {
           console.log("login Sucessful");
           this.$router.push({ name: "dashboard" });
@@ -212,4 +211,3 @@ export default {
   },
 };
 </script>
-
