@@ -378,11 +378,14 @@
                       required
                       selected
                     >
-                      <option v-if="currentUser && currentUser.org">
+                      <option
+                        v-if="currentUser && currentUser.org"
+                        :value="currentUser.org"
+                      >
                         {{ currentUser.org }}
                       </option>
                     </select>
-                  </div>
+                  </div>      
                   <div>
                     <label
                       for="email"
@@ -407,7 +410,7 @@
                     <div class="relative flex">
                       <input
                         :type="passwordVisible ? 'text' : 'password'"
-                        v-model="password"
+                        v-model="userdata.password"
                         name="password"
                         id="password"
                         placeholder="••••••••"
@@ -495,7 +498,7 @@
   </div>
 
   <!-- Users -->
-  <div class="grid grid-cols-6 mt-5">
+  <div class="grid grid-cols-6 mt-2">
     <div class="col-start-2 col-span-5">
       <div class="relative overflow-x-auto">
         <table
@@ -864,8 +867,6 @@ export default {
       orgPublication: [],
       users: [],
     },
-
-    showOrganizations() {},
     showUsers() {
       const userId = Meteor.userId();
       const userDetails = Meteor.user();
@@ -884,6 +885,18 @@ export default {
         console.log("Check format");
       }
     },
+
+    showOrganizations() {
+      const userId = Meteor.userId();
+      // if (userId) {
+      return Organizations.find({}).fetch();
+      // }
+      //return Organizations.find({}).fetch();
+    },
+
+    // showUsers() {
+    //   return Meteor.users.find({}, { sort: { createdAt: -1 } });
+    // },
   },
 };
 </script>

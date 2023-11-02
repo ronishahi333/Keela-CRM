@@ -198,6 +198,199 @@
     </div>
   </div>
 
+  <div class="grid grid-cols-6">
+    <div class="col-start-6 justify-self-end">
+      <div>
+        <!-- Modal toggle button -->
+        <button
+          data-modal-toggle="authentication-modal"
+          class="px-5 py-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+          type="button"
+          @click="AdminUserToggleModal"
+        >
+          Add Users
+        </button>
+
+        <!-- Overlay -->
+        <div
+          v-if="AdminUserAddModal"
+          class="fixed inset-0 z-40 bg-gray-900 opacity-40 flex items-center justify-center"
+        ></div>
+
+        <!-- Main modal -->
+        <div
+          id="authentication-modal"
+          :class="{ hidden: !AdminUserAddModal }"
+          tabindex="-1"
+          aria-hidden="true"
+          class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex items-center justify-center"
+        >
+          <!-- Modal content -->
+          <div class="relative w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+              <button
+                type="button"
+                class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                @click="addcloseModal()"
+              >
+                <svg
+                  class="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 14"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                  />
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+              <div class="px-6 py-6 lg:px-8">
+                <h3
+                  class="mb-8 text-xl font-medium text-gray-900 dark:text-white"
+                >
+                  Add New User
+                </h3>
+                <form class="space-y-6" @submit.prevent="saveUsers">
+                  <div>
+                    <label
+                      for="orgname"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Organization Name</label
+                    >
+                    <select
+                      name="orgname"
+                      id="orgname"
+                      v-model="userdata.selectedOrganization"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      required
+                    >
+                      <option
+                        v-for="org in showOrganizations"
+                        v-bind:value="org"
+                        v-bind:key="org._id"
+                      >
+                        {{ org.organizationName }}
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      for="email"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Primary Email</label
+                    >
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      v-model="userdata.email"
+                      placeholder="spanish786@gmail.com"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="phonenumber"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Password</label
+                    >
+                    <div class="relative flex">
+                      <input
+                        :type="passwordVisible ? 'text' : 'password'"
+                        v-model="userdata.password"
+                        name="password"
+                        id="password"
+                        placeholder="••••••••"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required=""
+                      />
+                      <button
+                        type="button"
+                        class="absolute inset-y-0 right-0 px-2.5 py-2.5 text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-white"
+                        @click="togglePasswordVisibility()"
+                      >
+                        <svg
+                          v-if="passwordVisible"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-eye"
+                        >
+                          <path
+                            d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+                          />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg
+                          v-else
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-eye-off"
+                        >
+                          <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                          <path
+                            d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                          />
+                          <path
+                            d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                          />
+                          <line x1="2" x2="22" y1="2" y2="22" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      for="permission"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Permission</label
+                    >
+                    <select
+                      type="text"
+                      name="permission"
+                      id="permission"
+                      v-model="userdata.permission"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="Coordinator">Coordinator</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Save
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Organizations -->
   <div class="grid grid-cols-6 mt-5">
     <div class="col-start-2 col-span-5">
@@ -399,37 +592,37 @@ export default {
       this.userdata.permission = "";
     },
 
-    // saveUsers() {
-    //   const option = {
-    //     email: this.userdata.email,
-    //     password: this.userdata.password,
-    //     profile: {
-    //       organizationName: this.userdata.selectedOrganization.organizationName,
-    //       organizationId: this.userdata.selectedOrganization._id,
-    //       permission: this.userdata.permission,
-    //     },
-    //   };
-    //   Meteor.call("insertUser", option, (error, result) => {
-    //     if (error) {
-    //       console.error("Error saving User", error.reason);
-    //     } else {
-    //       console.log("User saved", result);
-    //       const toast = document.getElementById("toast-success");
-    //       toast.style.display = "block";
+    saveUsers() {
+      const option = {
+        email: this.userdata.email,
+        password: this.userdata.password,
+        profile: {
+          organizationName: this.userdata.selectedOrganization.organizationName,
+          organizationId: this.userdata.selectedOrganization._id,
+          permission: this.userdata.permission,
+        },
+      };
+      Meteor.call("insertUser", option, (error, result) => {
+        if (error) {
+          console.error("Error saving User", error.reason);
+        } else {
+          console.log("User saved", result);
+          const toast = document.getElementById("toast-success");
+          toast.style.display = "block";
 
-    //       // Hide the toast after 2 seconds
-    //       setTimeout(() => {
-    //         toast.style.display = "none";
-    //       }, 1500);
-    //       //the four lines below clears the forms fields after saving
-    //       this.userdata.selectedOrganization = "";
-    //       this.userdata.email = "";
-    //       this.userdata.password = "";
-    //       this.userdata.permission = "";
-    //       this.AdminUserToggleModal(); //Closes the Add Contact Modal
-    //     }
-    //   });
-    // },
+          // Hide the toast after 2 seconds
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 1500);
+          //the four lines below clears the forms fields after saving
+          this.userdata.selectedOrganization = "";
+          this.userdata.email = "";
+          this.userdata.password = "";
+          this.userdata.permission = "";
+          this.AdminUserToggleModal(); //Closes the Add Contact Modal
+        }
+      });
+    },
 
     deleteUser(userId) {
       // Call the 'contacts.remove' method on the server
@@ -462,7 +655,7 @@ export default {
         // selectedOrganization: this.userdata.selectedOrganization,
         // email: this.userdata.email,
         // password: this.userdata.password,
-        'profile.permission': this.userdata.permission,
+        "profile.permission": this.userdata.permission,
       };
 
       Meteor.call(
@@ -500,7 +693,7 @@ export default {
     },
 
     showUsers() {
-      return Meteor.users.find({},{ sort: { createdAt: -1 } });
+      return Meteor.users.find({}, { sort: { createdAt: -1 } });
     },
   },
 };
