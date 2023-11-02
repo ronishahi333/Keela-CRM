@@ -17,3 +17,7 @@ This is a simple example of how to use Vue3 with Meteor.
 - [Meteor](https://www.meteor.com/)
 - [Vue Meteor Tracker](https://github.com/meteor-vue/vue-meteor-tracker)
 - [Tailwind CSS](https://tailwindcss.com/)
+
+## For Admin
+
+There is no authentication, just use the route "/admin" to access it
