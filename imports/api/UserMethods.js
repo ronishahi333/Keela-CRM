@@ -16,12 +16,10 @@ Meteor.methods({
   },
 
   updateUser(data) {
-    Meteor.users.update(
-      { _id: data.userId },
-      {
+    Meteor.users.update(data._id, {
         $set: {
-           'profile.permission': data.updates['profile.permission'],
+           ...data,
         },
-      })
+    })
   }
 });

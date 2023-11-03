@@ -644,37 +644,30 @@ export default {
     openEditUserModal(users) {
       console.log("Edit Button Clicked", users);
       this.UserEditModal = true;
+      this.userdata = { ...users };
       this.userdata.permission = users.profile.permission;
     },
 
     updateUsers() {
       const updatedUserData = {
-        // userId: this.userdata._id,
-        //_id: this.userdata._id,
-        // selectedOrganization: this.userdata.selectedOrganization,
-        // email: this.userdata.email,
-        // password: this.userdata.password,
+        _id: this.userdata._id,
         "profile.permission": this.userdata.permission,
       };
 
-      Meteor.call(
-        "updateUser",
-        { userId: this.userdata._id, updates: updatedUserData },
-        (error, result) => {
-          if (error) {
-            console.error("Error updating user:", error.reason);
-          } else {
-            console.log("User updated successfully.");
-            const toast = document.getElementById("toast-edit");
-            toast.style.display = "block";
-            // Hides the toast after 2 seconds
-            setTimeout(() => {
-              toast.style.display = "none";
-            }, 1500);
-            this.UserEditModal = false; // Closes the Edit Usesr Modal
-          }
+      Meteor.call("updateUser", updatedUserData, (error, result) => {
+        if (error) {
+          console.error("Error updating user:", error.reason);
+        } else {
+          console.log("User updated successfully.");
+          const toast = document.getElementById("toast-edit");
+          toast.style.display = "block";
+          // Hides the toast after 2 seconds
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 1500);
+          this.UserEditModal = false; // Closes the Edit Usesr Modal
         }
-      );
+      });
     },
   },
 

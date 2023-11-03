@@ -770,33 +770,30 @@ export default {
     openEditUserModal(users) {
       console.log("Edit Button Clicked", users);
       this.UserEditModal = true;
+      this.userdata = { ...users };
       this.userdata.permission = users.profile.permission;
     },
 
     updateUser() {
       const updatedUserData = {
-        userId: this.userdata._id,
-        permission: this.userdata.permission,
+        _id: this.userdata._id,
+        "profile.permission": this.userdata.permission,
       };
 
-      Meteor.call(
-        "updateUser",
-        { updates: updatedUserData },
-        (error, result) => {
-          if (error) {
-            console.error("Error updating user:", error.reason);
-          } else {
-            console.log("User updated successfully.");
-            const toast = document.getElementById("toast-edit");
-            toast.style.display = "block";
-            // Hides the toast after 1.5 seconds
-            setTimeout(() => {
-              toast.style.display = "none";
-            }, 1500);
-            this.UserEditModal = false; // Closes the Edit Users Modal
-          }
+      Meteor.call("updateUser", updatedUserData, (error, result) => {
+        if (error) {
+          console.error("Error updating user:", error.reason);
+        } else {
+          console.log("User updated successfully.");
+          const toast = document.getElementById("toast-edit");
+          toast.style.display = "block";
+          // Hides the toast after 1.5 seconds
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 1500);
+          this.UserEditModal = false; // Closes the Edit Users Modal
         }
-      );
+      });
     },
 
     openDropdown() {
